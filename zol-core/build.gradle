@@ -1,0 +1,22 @@
+apply plugin: 'java-library'
+//apply plugin: 'war'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral();
+}
+
+def v = [
+        'servletApi': '3.1.0',
+        'websocketApi': '1.1',
+        'jsonApi': '1.1.4'
+]
+
+dependencies {
+    api group: 'javax.servlet', name: 'javax.servlet-api', version: "$v.servletApi"
+    api group: 'javax.websocket', name: 'javax.websocket-api', version: "$v.websocketApi"
+    compile group: 'org.glassfish', name: 'javax.json', version: "$v.jsonApi"
+
+}

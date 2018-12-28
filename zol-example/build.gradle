@@ -1,0 +1,21 @@
+//apply plugin: 'java-library'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral();
+}
+
+def v = [
+        'servletApi': '3.0.1'
+]
+
+dependencies {
+
+    compile project(':zol-core')
+
+    //api group: 'javax.servlet', name: 'javax.servlet-api', version: "$v.servletApi"
+
+}

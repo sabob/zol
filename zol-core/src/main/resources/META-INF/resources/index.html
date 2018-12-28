@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <meta name="description" content="Zol"/>
+        <meta name="keywords" content="Zol Stompee" />
+        <meta name="author" content="Phillip Kruger"/>
+        <meta name="url" content="https://github.com/sabob/zol"/>
+        <link rel="icon" href="logo.png"/>
+        <link rel="apple-touch-icon" href="logo.png"/>
+        <link rel="apple-touch-icon-precomposed" href="logo.png"/>
+        <link rel="shortcut icon" type="image/x-icon" href="logo.png"/>
+        
+        <title>Zol - Zol is a log viewer (a tail for the web) that can be deployed to Java Servlet Containers</title>
+
+        <!-- Semantic UI -->
+        <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+        <!-- Our own crap -->
+        <link rel="stylesheet" type="text/css" href="css/stompee.css">
+        
+    </head>
+    
+    <body>
+        
+        <!-- Menubar -->
+        <div class="ui fixed inverted borderless menu">
+            <div class="header item"><h2><a href="">Zol</a></h2></div>
+            <div class="item">
+                <div id="loggerDropdown" class="ui floating dropdown labeled search focus">
+                    <span id="selectedLoggerName" class="text">Enter Logger name</span>
+                    <div id="loggerNameMenu" class="menu">
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <a title="Start tailing log" class="item" onclick="startLog();" id="startIcon"><i class="play icon"></i></a>
+            <a title="Stop tailing log" class="item disabled" onclick="stopLog();" id="stopIcon"><i class="stop icon"></i></a>
+            <a title="Clear screen" class="item" onclick="clearScreen();"><i class="trash outline icon"></i></a>
+            <a title="Settings" class="item" onclick="showSettingsModal();" id="settingsIcon"><i class="setting icon"></i></a>
+            <div class="right menu">
+                <div class="header item" id="applicationName"></div>
+                <a title="About" class="item" onclick="showAboutModal();"><i class="info circle icon"></i></a>
+            </div>
+
+        </div>
+        
+        <!-- The log -->
+        <div class="log">
+            <table id="disable" class="ui basic sortable very compact table">
+                <thead>
+                    <tr>
+                        <th  class="one wide">Sequence Number</th>
+                        <th>Thread</th>
+                        <th>Time</th>
+                        <th>Class</th>
+                        <th>Method</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody id="messages">
+
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="settings"></div>
+        <div id="about"></div>
+        
+        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/semantic.min.js"></script>
+        
+        <script src="js/stompee.js"></script>
+        <script src="js/tablesort.js"></script>
+        <script> 
+            $(function(){
+                $("#settings").load("settings.html");
+                $("#about").load("about.html"); 
+            });
+        </script> 
+    </body>
+</html>
