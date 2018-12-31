@@ -36,7 +36,7 @@ $('document').ready(function () {
     });
 
     // Check if we should populate the logger
-    var loggerName = getParameterByName('logger');
+    var loggerName = getParameterByName('loggerName');
 
     if (loggerName) {
         $('#selectedLoggerName').text(loggerName);
@@ -46,7 +46,7 @@ $('document').ready(function () {
         var defaultSettings = httpGet(url);
         var defaultSettingsJson = JSON.parse(defaultSettings);
 
-        var defaultLoggerName = defaultSettingsJson.name;
+        var defaultLoggerName = defaultSettingsJson.loggerName;
         if (defaultLoggerName) {
             $('#selectedLoggerName').text(defaultLoggerName);
         }
@@ -75,10 +75,11 @@ function getContextRoot() {
 
 function openSocket() {
     // Ensures only one connection is open at a time
-    if (webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED) {
+    if (isWebSocketOpen()) {
         writeResponse("Already connected...");
         return;
     }
+
     // Create a new instance of the websocket
     var loc = window.location, new_uri;
     if (loc.protocol === "https:") {
@@ -130,7 +131,7 @@ function openSocket() {
         var timestamp = new Date(json.timestamp);
         var timestring = timestamp.toLocaleTimeString();
         var datestring = timestamp.toLocaleDateString();
-        var level = getClassLogLevel(json.level);
+        var level = getClassLogLevel(json.logLevel);
         var tid = json.threadId;
         var msg = getMessage(json);
         var sourceClassName = json.sourceClassName;
@@ -139,8 +140,8 @@ function openSocket() {
         var sequenceNumber = json.sequenceNumber;
 
         var rowStr = "<tr class='" + level + "'>\n";
-        rowStr += "<td data-tooltip='" + json.level + "' data-position='top left'>\n";
-        rowStr += "<a class='ui " + getLogLevelColor(json.level) + " empty circular label'></a> " + sequenceNumber + "\n";
+        rowStr += "<td data-tooltip='" + json.logLevell + "' data-position='top left'>\n";
+        rowStr += "<a class='ui " + getLogLevelColor(json.logLevel) + " empty circular label'></a> " + sequenceNumber + "\n";
         rowStr += "</td>\n";
         rowStr += "<td onclick='filterByThreadId(" + tid + ");'>" + tid + "</td>\n";
         rowStr += "<td data-tooltip='" + datestring + "' data-position='top left'>" + timestring + "</td>\n";
@@ -187,11 +188,13 @@ function startLog() {
         $("#loggerDropdown").addClass("disabled");
         $("#loggerDropdown").prop("disabled", true);
 
-        var exceptionsOnly = $("#exceptionOnly").val();
-        exceptionsOnly = true;
+        var exceptionsOnly = $('#buttonExceptionsOnly').prop('checked');
+        var logLevel = getUILogLevel();
+        //exceptionsOnly = true;
         var map = new Map();
-        putMap(map, "logger", loggerName);
+        putMap(map, "loggerName", loggerName);
         putMap(map, "exceptionsOnly", exceptionsOnly);
+        putMap(map, "logLevel", logLevel);
         var msg = createJsonMessage("start", map);
 
         webSocket.send(msg);
@@ -228,7 +231,15 @@ function stopLog() {
     }
 }
 
-function toggleLogLevel(level) {
+function getUILogLevel() {
+    var levelValue = $("input[name='level']:checked").val();
+    return levelValue;
+}
+
+function toggleLogLevel() {
+
+    var level = getUILogLevel();
+
     var map = new Map();
     putMap(map, "logLevel", level);
     var msg = createJsonMessage("setLogLevel", map);
@@ -355,26 +366,25 @@ function clearScreen() {
 
 function showSettingsModal() {
     // Here get the current settings
-    var loggerName = $('#loggerDropdown').dropdown('get text');
-    if (loggerName) {
-        var url = contextRoot + "/servlet/zol?action=getLoggerLevel&name=" + loggerName;
-        var resp = httpGet(url);
-        var levelJson = JSON.parse(resp);
-        messageLogLevel(levelJson.level);
+    //var loggerName = $('#loggerDropdown').dropdown('get text');
+    //if (loggerName) {
+    //var url = contextRoot + "/servlet/zol?action=getLoggerLevel&name=" + loggerName;
+    //var resp = httpGet(url);
+    //var levelJson = JSON.parse(resp);
+    //setUILogLevel(levelJson.logLevel);
 
-        $('#modalSettings')
-            .modal({
-                onHide: function () {
-                    filterMessages();
-                },
-                onHidden: function () {
-                    cleanupModal();
-                }
-            })
-            .modal('setting', 'transition', 'vertical flip')
-            .modal('show')
-        ;
-    }
+    $('#modalSettings')
+        .modal({
+            onHide: function () {
+                filterMessages();
+            },
+            onHidden: function () {
+                cleanupModal();
+            }
+        })
+        .modal('setting', 'transition', 'vertical flip')
+        .modal('show')
+    //}
 }
 
 function filterMessages() {
@@ -406,7 +416,7 @@ function filterByThreadId(threadId) {
     //console.log("TODO: Filter by id " + threadId);
 }
 
-function messageLogLevel(level) {
+function setUILogLevel(level) {
     if (level === "INFO")
         $("#buttonInfo").prop("checked", "checked");
     if (level === "FINE")
@@ -532,4 +542,11 @@ function scrollToBottom() {
 
     var scrollHeight = el.scrollHeight
     el.scrollTop = scrollHeight;
+}
+
+function isWebSocketOpen() {
+    if (webSocket == null || webSocket.readyState == WebSocket.CLOSED) {
+        return false;
+    }
+    return true;
 }

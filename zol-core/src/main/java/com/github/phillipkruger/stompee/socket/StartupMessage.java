@@ -1,28 +1,28 @@
-package com.github.phillipkruger.stompee;
+package com.github.phillipkruger.stompee.socket;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import com.github.phillipkruger.stompee.json.Json;
 
 /**
  * To create a startup message, to send system state
  * @author Phillip Kruger (stompee@phillip-kruger.com)
  */
-public class StartupMessage extends SystemMessage {
-    
+public class StartupMessage {
+
     private String applicationName;
 
-    @Override
-    protected JsonObject toJsonObject(){
-        JsonObjectBuilder builder = getJsonObjectBuilder();
-        if(applicationName!=null)builder.add(APPLICATION_NAME, applicationName);
-        return builder.build();
+    protected Json toJson(){
+        Json json = Json.object( SocketProtocol.MESSAGE_TYPE, getMessageType());
+
+        if(applicationName!=null) {
+            json.set( APPLICATION_NAME, getApplicationName() );
+        }
+        return json;
     }
-    
-    @Override
+
     protected String getMessageType() {
         return STARTUP_MESSAGE;
     }
-    
+
     private static final String STARTUP_MESSAGE = "startupMessage";
     private static final String APPLICATION_NAME = "applicationName";
 
@@ -32,5 +32,9 @@ public class StartupMessage extends SystemMessage {
 
     public void setApplicationName( String applicationName ) {
         this.applicationName = applicationName;
+    }
+
+    public String toString() {
+        return toJson().toString();
     }
 }

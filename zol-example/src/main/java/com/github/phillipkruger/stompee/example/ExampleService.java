@@ -1,9 +1,7 @@
 package com.github.phillipkruger.stompee.example;
 
-import com.github.phillipkruger.stompee.StompeeUtil;
+import com.github.phillipkruger.stompee.util.StompeeUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

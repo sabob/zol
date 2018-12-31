@@ -1,4 +1,4 @@
-package com.github.phillipkruger.stompee;
+package com.github.phillipkruger.stompee.config;
 
 import java.io.IOException;
 import java.io.InputStream;

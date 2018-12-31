@@ -1,13 +1,16 @@
 package com.github.phillipkruger.stompee;
 
-import javax.json.*;
+import com.github.phillipkruger.stompee.config.StompeeProperties;
+import com.github.phillipkruger.stompee.json.Json;
+import com.github.phillipkruger.stompee.socket.SocketProtocol;
+import com.github.phillipkruger.stompee.util.StompeeUtil;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,12 +28,11 @@ public class StompeeServlet extends HttpServlet {
     private static final String ACTION = "action";
 
     private static final String GET_ALL_LOGGER_NAMES = "getAllLoggerNames";
-    private static final String GET_LOGGER_LEVEL = "getLoggerLevel";
+    //private static final String GET_LOGGER_LEVEL = "getLoggerLevel";
     private static final String GET_DEFAULT_SETTINGS = "getDefaultSettings";
-    private static final String NAME = "name";
-    private static final String LEVEL = "level";
+    private static final String LOGGER_PROP = "logger";
+    //private static final String LEVEL = "level";
     private static final String CONTENT_TYPE = "application/json";
-    private final StompeeUtil stompeeUtil = new StompeeUtil();
 
     private StompeeProperties stompeeProperties = ServiceFactory.getProperties();
 
@@ -41,61 +43,62 @@ public class StompeeServlet extends HttpServlet {
         String action = req.getParameter( ACTION );
         if ( GET_ALL_LOGGER_NAMES.equalsIgnoreCase( action ) ) {
             getAllLoggerNames( req, res );
-        } else if ( GET_LOGGER_LEVEL.equalsIgnoreCase( action ) ) {
-            getLoggerLevel( req, res );
+
+//        } else if ( GET_LOGGER_LEVEL.equalsIgnoreCase( action ) ) {
+//            getLoggerLevel( req, res );
+
         } else if ( GET_DEFAULT_SETTINGS.equalsIgnoreCase( action ) ) {
             getDefaultSettings( res );
         }
     }
 
     private void getDefaultSettings( ServletResponse res ) throws IOException, ServletException {
-        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        String loggerName = stompeeProperties.getProperty( "logger", null );
-        if ( loggerName != null && !loggerName.isEmpty() ) objectBuilder.add( NAME, loggerName );
-        String loggerLevel = stompeeProperties.getProperty( "level", null );
-        if ( loggerLevel != null && !loggerLevel.isEmpty() ) objectBuilder.add( LEVEL, loggerLevel );
-        writeObject( res, objectBuilder.build() );
+        Json json = Json.object();
+        //JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+        String loggerName = stompeeProperties.getProperty( SocketProtocol.LOGGER_NAME, null );
+        if ( loggerName != null && !loggerName.isEmpty() ) {
+            //objectBuilder.add( SocketProtocol.LOGGER, loggerName );
+            json.set( SocketProtocol.LOGGER_NAME, loggerName );
+        }
+
+        String loggerLevel = stompeeProperties.getProperty( SocketProtocol.LOG_LEVEL, null );
+        if ( loggerLevel != null && !loggerLevel.isEmpty() ) {
+            //objectBuilder.add( SocketProtocol.LOG_LEVEL, loggerLevel );
+            json.set( SocketProtocol.LOG_LEVEL, loggerLevel );
+        }
+        writeJson( res, json );
     }
 
-    private void getLoggerLevel( ServletRequest req, ServletResponse res ) throws IOException, ServletException {
-        String name = req.getParameter( NAME );
-        Level level = stompeeUtil.getLevel( name );
-        if ( level != null ) {
-            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-            objectBuilder.add( LEVEL, level.getName() );
-            writeObject( res, objectBuilder.build() );
-        }
-    }
+//    private void getLoggerLevel( ServletRequest req, ServletResponse res ) throws IOException, ServletException {
+//        //String name = req.getParameter( NAME );
+//        //Level level = stompeeUtil.getLevel( name );
+//
+//        Level level = Level.INFO;
+//        String levelName = stompeeProperties.getProperty( Settings.LOG_LEVEL, level.getName() );
+//        level = StompeeUtil.parseLevel( levelName );
+//
+//        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+//        objectBuilder.add( LEVEL, level.getName() );
+//        writeObject( res, objectBuilder.build() );
+//    }
 
     private void getAllLoggerNames( ServletRequest req, ServletResponse res ) throws IOException, ServletException {
 
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        //JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        Json json = Json.array();
 
-        List<String> loggers = stompeeUtil.getAllLoggerNames();
+        List<String> loggers = StompeeUtil.getAllLoggerNames();
         loggers.forEach( ( name ) -> {
-            arrayBuilder.add( name );
+            //arrayBuilder.add( name );
+            json.add( name );
         } );
-        writeArray( res, arrayBuilder.build() );
+        writeJson( res, json );
     }
 
-    private void writeObject( ServletResponse res, JsonObject o ) throws IOException {
-        try ( StringWriter stringWriter = new StringWriter();
-              JsonWriter jsonWriter = Json.createWriter( stringWriter ) ) {
-            jsonWriter.writeObject( o );
-            res.getWriter().write( stringWriter.toString() );
-        } catch ( IOException ex ) {
-            LOGGER.log( Level.SEVERE, null, ex );
-        }
-        res.getWriter().flush();
-    }
+    private void writeJson( ServletResponse res, Json json ) throws IOException {
 
-    private void writeArray( ServletResponse res, JsonArray a ) throws IOException {
-
-        try ( StringWriter stringWriter = new StringWriter();
-
-              JsonWriter jsonWriter = Json.createWriter( stringWriter ) ) {
-            jsonWriter.writeArray( a );
-            res.getWriter().write( stringWriter.toString() );
+        try {
+            res.getWriter().write( json.toString() );
 
         } catch ( IOException ex ) {
             LOGGER.log( Level.SEVERE, null, ex );

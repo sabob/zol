@@ -1,5 +1,7 @@
 package com.github.phillipkruger.stompee;
 
+import com.github.phillipkruger.stompee.config.StompeeProperties;
+
 public class ServiceFactory {
 
     private static StompeeProperties STOMPEE_PROPS;
