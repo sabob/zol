@@ -1,7 +1,7 @@
 package com.github.phillipkruger.stompee.log;
 
 import com.github.phillipkruger.stompee.util.JsonFormatter;
-import com.github.phillipkruger.stompee.util.StompeeUtil;
+import com.github.phillipkruger.stompee.util.ZolUtil;
 import com.github.phillipkruger.stompee.config.ZolConfig;
 
 import javax.websocket.Session;
@@ -63,7 +63,7 @@ public class ZolLogHandler extends Handler {
 
     private boolean canLogAtLevel( LogRecord logRecord ) {
 
-        ZolConfig config = StompeeUtil.getConfig( session );
+        ZolConfig config = ZolUtil.getConfig( session );
         Level activeLevel = config.getLogLevel();
 
         int activeLevelInt = activeLevel.intValue();
@@ -77,7 +77,7 @@ public class ZolLogHandler extends Handler {
     }
 
     private boolean isLogExceptionOnly() {
-        ZolConfig config = StompeeUtil.getConfig( session );
+        ZolConfig config = ZolUtil.getConfig( session );
         boolean exceptionsOnly = config.isExceptionsOnly();
         return exceptionsOnly;
     }
@@ -90,7 +90,7 @@ public class ZolLogHandler extends Handler {
     }
 
     private boolean filter( LogRecord logRecord ) {
-        ZolConfig config = StompeeUtil.getConfig( session );
+        ZolConfig config = ZolUtil.getConfig( session );
         String filter = config.getFilter();
 
         if ( filter == null || filter.isEmpty() ) {

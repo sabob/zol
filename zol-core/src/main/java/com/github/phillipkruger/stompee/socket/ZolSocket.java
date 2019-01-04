@@ -6,7 +6,7 @@ import com.github.phillipkruger.stompee.config.ZolConfig;
 import com.github.phillipkruger.stompee.config.ZolSessionStore;
 import com.github.phillipkruger.stompee.json.Json;
 import com.github.phillipkruger.stompee.log.ZolLogHandler;
-import com.github.phillipkruger.stompee.util.StompeeUtil;
+import com.github.phillipkruger.stompee.util.ZolUtil;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -28,10 +28,10 @@ import java.util.logging.MemoryHandler;
  *
  * @author Phillip Kruger (stompee@phillip-kruger.com)
  */
-@ServerEndpoint( "/socket/zol" )
-public class StompeeSocket {
+@ServerEndpoint( "/zol/socket" )
+public class ZolSocket {
 
-    private static final Logger LOGGER = Logger.getLogger( StompeeSocket.class.getName() );
+    private static final Logger LOGGER = Logger.getLogger( ZolSocket.class.getName() );
 
     //private static final String ID = "uuid";
     //private static final String HANDLER = "handler";
@@ -53,7 +53,7 @@ public class StompeeSocket {
 
     @OnOpen
     public void onOpen( Session session ) {
-        String appName = StompeeUtil.getAppName();
+        String appName = ZolUtil.getAppName();
         sendStartupMessage( appName, session );
     }
 
@@ -103,7 +103,7 @@ public class StompeeSocket {
 
         setDefaultLogLevel( session );
 
-        ZolSessionStore store = StompeeUtil.createSessionStore( session );
+        ZolSessionStore store = ZolUtil.createSessionStore( session );
         String uuid = store.getUuid();
 
         if ( uuid == null ) {
@@ -112,7 +112,7 @@ public class StompeeSocket {
             SESSIONS.put( session.getId(), session );
 
 
-            //Level level = StompeeUtil.parseLevel( levelName );
+            //Level level = ZolUtil.parseLevel( levelName );
             //session.getUserProperties().put( Settings.LEVEL, level );
 
 //            if ( levelName != null && !levelName.isEmpty() ) {
@@ -125,8 +125,8 @@ public class StompeeSocket {
 
         String id = null;
 
-        if ( StompeeUtil.hasSessionStore( session ) ) {
-            ZolSessionStore store = StompeeUtil.getSessionStore( session );
+        if ( ZolUtil.hasSessionStore( session ) ) {
+            ZolSessionStore store = ZolUtil.getSessionStore( session );
             id = store.getUuid();
         }
 
@@ -137,7 +137,7 @@ public class StompeeSocket {
     }
 
 //    private String getLogLevel( Session session ) {
-//        Level level = StompeeUtil.getSessionLogLevel( session );
+//        Level level = ZolUtil.getSessionLogLevel( session );
 //        if (level == null) {
 //            return null;
 //        }
@@ -145,7 +145,7 @@ public class StompeeSocket {
 //    }
 
     private void setLogLevel( Session session, Level level ) {
-        ZolConfig config = StompeeUtil.getOrCreateConfig( session );
+        ZolConfig config = ZolUtil.getOrCreateConfig( session );
         config.setLogLevel( level );
     }
 
@@ -169,7 +169,7 @@ public class StompeeSocket {
 //    }
 
     private void setExceptionsOnly( Session session, Boolean exceptionsOnly ) {
-        ZolConfig config = StompeeUtil.getOrCreateConfig( session );
+        ZolConfig config = ZolUtil.getOrCreateConfig( session );
 
         if ( exceptionsOnly == null ) {
             exceptionsOnly = false;
@@ -180,7 +180,7 @@ public class StompeeSocket {
 
     private void setFilter( Session session, String filter ) {
 
-        ZolConfig config = StompeeUtil.getOrCreateConfig( session );
+        ZolConfig config = ZolUtil.getOrCreateConfig( session );
         config.setFilter( filter );
     }
 
@@ -199,28 +199,28 @@ public class StompeeSocket {
 
         Handler handler = new MemoryHandler( new ZolLogHandler( session, protocol.getLoggerName() ), 1000, Level.FINEST );
 
-        Logger logger = StompeeUtil.getLogger( protocol.getLoggerName() );
+        Logger logger = ZolUtil.getLogger( protocol.getLoggerName() );
         if ( logger != null ) {
             logger.addHandler( handler );
 
-            ZolSessionStore store = StompeeUtil.getOrCreateSessionStore( session );
+            ZolSessionStore store = ZolUtil.getOrCreateSessionStore( session );
             store.setHandler( handler );
             store.setUuid( uuid );
             store.setLoggerName( protocol.getLoggerName() );
-            Level origLevel = StompeeUtil.getLevel( logger );
+            Level origLevel = ZolUtil.getLevel( logger );
             store.setOrigLogLevel( origLevel );
         }
     }
 
     private void unregisterHandler( Session session ) {
 
-        ZolSessionStore store = StompeeUtil.getSessionStore( session );
+        ZolSessionStore store = ZolUtil.getSessionStore( session );
 
         Handler handler = store.getHandler();
         String loggerName = store.getLoggerName();
         //String loggerName = ( String ) session.getUserProperties().get( LOGGER_NAME );
         if ( handler != null ) {
-            Logger logger = StompeeUtil.getLogger( loggerName );
+            Logger logger = ZolUtil.getLogger( loggerName );
             if ( logger != null ) logger.removeHandler( handler );
         }
 
@@ -228,12 +228,12 @@ public class StompeeSocket {
         Level originalLevel = store.getOrigLogLevel();
         setLogLevel( session, originalLevel );
 
-        StompeeUtil.removeSessionStore( session );
+        ZolUtil.removeSessionStore( session );
 
 //        session.getUserProperties().remove( ID );
 //        session.getUserProperties().remove( HANDLER );
 //        session.getUserProperties().remove( LOGGER_NAME );
-        StompeeUtil.removeConfig( session );
+        ZolUtil.removeConfig( session );
 
 
 //        session.getUserProperties().remove( Settings.EXCEPTIONS_ONLY );
@@ -268,13 +268,13 @@ public class StompeeSocket {
 
     private void setDefaultLogLevel( Session session ) {
 
-        ZolConfig config = StompeeUtil.getConfig( session );
+        ZolConfig config = ZolUtil.getConfig( session );
         Level activeLevel = config.getLogLevel();
 
         if ( activeLevel == null ) {
             // Set the default level
             String levelName = getDefaultLogLevel();
-            Level level = StompeeUtil.parseLevel( levelName );
+            Level level = ZolUtil.parseLevel( levelName );
             setLogLevel( session, level );
 
         }
@@ -286,7 +286,7 @@ public class StompeeSocket {
         setExceptionsOnly( session, protocol.getExceptionsOnly() );
         setLogLevel( session, protocol.getLogLevel() );
 
-        if ( StompeeUtil.validLogger( loggerName ) ) {
+        if ( ZolUtil.validLogger( loggerName ) ) {
             performStart( session, protocol );
         }
     }

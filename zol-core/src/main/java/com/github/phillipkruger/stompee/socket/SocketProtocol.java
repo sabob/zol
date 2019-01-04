@@ -1,7 +1,7 @@
 package com.github.phillipkruger.stompee.socket;
 
 import com.github.phillipkruger.stompee.json.Json;
-import com.github.phillipkruger.stompee.util.StompeeUtil;
+import com.github.phillipkruger.stompee.util.ZolUtil;
 
 import java.util.logging.Level;
 
@@ -21,12 +21,17 @@ public class SocketProtocol {
     private static final String SET_LOG_LEVEL = "setLogLevel";
     private static final String SET_EXCEPTIONS_ONLY = "setExceptionsOnly";
     private static final String SET_FILTER = "setFilter";
-    private static final String ACTION = "action";
+
+    public static final String ACTION = "action";
 
     // Log Message format
     public static final String LOG = "log";
     public static final String MESSAGE_TYPE = "messageType";
     public static final String LOGGER_NAME = "loggerName";
+
+    public static final String USER = "user";
+    public static final String USER_UNKNOWN = "Unknown";
+
     //public static final String LEVEL = "level";
     public static final String MESSAGE = "message";
     public static final String SOURCE_CLASS_NAME_FULL = "sourceClassNameFull";
@@ -136,7 +141,7 @@ public class SocketProtocol {
 
         if ( jo.has( LOG_LEVEL ) ) {
             String levelName = jo.at( LOG_LEVEL ).asString();
-            Level level = StompeeUtil.parseLevel( levelName );
+            Level level = ZolUtil.parseLevel( levelName );
             protocol.setLogLevel( level );
         }
 

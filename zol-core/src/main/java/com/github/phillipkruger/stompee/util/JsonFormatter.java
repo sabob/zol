@@ -38,8 +38,22 @@ public class JsonFormatter extends Formatter {
     }
 
     private Json toJson( LogRecord logRecord ) {
+
+
         String formattedMessage = formatMessage( logRecord );
-        Json json = Json.object( SocketProtocol.MESSAGE_TYPE, LOG );
+        Json json = Json.object( MESSAGE_TYPE, LOG );
+
+        if ( ContextFilter.hasThreadLocalContext() ) {
+            Context ctx = ContextFilter.getThreadLocalContext();
+            String remoteUser = ctx.getRemoteUser();
+
+            if (remoteUser == null || remoteUser.trim().isEmpty()) {
+                // don't set user
+
+            } else {
+                json.set( USER, remoteUser );
+            }
+        }
 
         if ( logRecord.getLoggerName() != null ) {
             json.set( LOGGER_NAME, loggerName );

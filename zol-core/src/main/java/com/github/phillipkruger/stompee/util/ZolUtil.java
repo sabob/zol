@@ -16,9 +16,9 @@ import java.util.logging.Logger;
  *
  * @author Phillip Kruger (stompee@phillip-kruger.com)
  */
-public class StompeeUtil {
+public class ZolUtil {
 
-    private static final Logger LOGGER = Logger.getLogger( StompeeUtil.class.getName() );
+    private static final Logger LOGGER = Logger.getLogger( ZolUtil.class.getName() );
 
     private static final String UNKNOWN = "Unknown";
 

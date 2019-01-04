@@ -15,10 +15,18 @@ $('document').ready(function () {
     registerPopups();
 
     // Get all logger names 
-    var url = contextRoot + "/servlet/zol?action=getAllLoggerNames";
+    var url = contextRoot + "/zol/servlet?action=getAllLoggerNames";
     var loggerNames = httpGet(url);
-    var loggerNamesArray = JSON.parse(loggerNames);
+    var result = parseJson(loggerNames);
+
+    var loggerNamesArray = [];
+
+    if (result.valid) {
+        loggerNamesArray = result.data;
+    }
+
     var loggerNameMenu = $('#loggerNameMenu');
+
 
     // Populate the dropdown
     for (var i = 0; i < loggerNamesArray.length; i++) {
@@ -42,9 +50,15 @@ $('document').ready(function () {
         $('#selectedLoggerName').text(loggerName);
     } else {
         // Else find default
-        var url = contextRoot + "/servlet/zol?action=getDefaultSettings";
+        var url = contextRoot + "/zol/servlet?action=getDefaultSettings";
         var defaultSettings = httpGet(url);
-        var defaultSettingsJson = JSON.parse(defaultSettings);
+
+        var defaultSettingsJson = {};
+
+        var result = parseJson(defaultSettings);
+        if (result.valid) {
+            defaultSettingsJson = result.data;
+        }
 
         var defaultLoggerName = defaultSettingsJson.loggerName;
         if (defaultLoggerName) {
@@ -88,7 +102,7 @@ function openSocket() {
         new_uri = "ws:";
     }
     new_uri += "//" + loc.host;
-    new_uri += contextRoot + "/socket/zol";
+    new_uri += contextRoot + "/zol/socket";
     webSocket = new WebSocket(new_uri);
 
     /**
@@ -107,7 +121,12 @@ function openSocket() {
     webSocket.onmessage = function (event) {
         try {
             // JSON Message
-            var json = JSON.parse(event.data);
+            var json = {};
+
+            var result = parseJson(event.data);
+            if (result.valid) {
+                json = result.data;
+            }
 
             switch (json.messageType) {
                 case "log":
@@ -368,7 +387,7 @@ function showSettingsModal() {
     // Here get the current settings
     //var loggerName = $('#loggerDropdown').dropdown('get text');
     //if (loggerName) {
-    //var url = contextRoot + "/servlet/zol?action=getLoggerLevel&name=" + loggerName;
+    //var url = contextRoot + "/zol/servlet?action=getLoggerLevel&name=" + loggerName;
     //var resp = httpGet(url);
     //var levelJson = JSON.parse(resp);
     //setUILogLevel(levelJson.logLevel);
@@ -550,3 +569,27 @@ function isWebSocketOpen() {
     }
     return true;
 }
+
+function parseJson(item) {
+
+    var result = {
+        valid: false,
+        data: null
+    }
+
+    try {
+        item = JSON.parse(item);
+
+    } catch (e) {
+        return result;
+    }
+
+    if (typeof item === "object" && item !== null) {
+        result.valid = true;
+        result.data = item;
+        return result;
+    }
+
+    return result;
+}
+

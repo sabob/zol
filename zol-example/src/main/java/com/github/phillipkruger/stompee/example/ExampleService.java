@@ -1,6 +1,6 @@
 package com.github.phillipkruger.stompee.example;
 
-import com.github.phillipkruger.stompee.util.StompeeUtil;
+import com.github.phillipkruger.stompee.util.ZolUtil;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,7 +12,7 @@ public class ExampleService {
     private LogTask task = new LogTask();
 
     public void start() {
-        new StompeeUtil();
+        new ZolUtil();
         System.out.println( "LOG SPAWNER STARTED!" );
 
         executor.execute( task );

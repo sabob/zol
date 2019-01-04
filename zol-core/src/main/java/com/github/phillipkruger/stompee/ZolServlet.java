@@ -3,7 +3,7 @@ package com.github.phillipkruger.stompee;
 import com.github.phillipkruger.stompee.config.StompeeProperties;
 import com.github.phillipkruger.stompee.json.Json;
 import com.github.phillipkruger.stompee.socket.SocketProtocol;
-import com.github.phillipkruger.stompee.util.StompeeUtil;
+import com.github.phillipkruger.stompee.util.ZolUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -20,12 +20,10 @@ import java.util.logging.Logger;
  *
  * @author Phillip Kruger (stompee@phillip-kruger.com)
  */
-@WebServlet( value = "/servlet/zol", name = "StompeeServlet" )
-public class StompeeServlet extends HttpServlet {
+@WebServlet( value = "/zol/servlet", name = "ZolServlet" )
+public class ZolServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger( StompeeUtil.class.getName() );
-
-    private static final String ACTION = "action";
+    private static final Logger LOGGER = Logger.getLogger( ZolUtil.class.getName() );
 
     private static final String GET_ALL_LOGGER_NAMES = "getAllLoggerNames";
     //private static final String GET_LOGGER_LEVEL = "getLoggerLevel";
@@ -34,13 +32,15 @@ public class StompeeServlet extends HttpServlet {
     //private static final String LEVEL = "level";
     private static final String CONTENT_TYPE = "application/json";
 
+    private static final String TEST_LOG = "log";
+
     private StompeeProperties stompeeProperties = ServiceFactory.getProperties();
 
     @Override
     public void service( ServletRequest req, ServletResponse res ) throws IOException, ServletException {
         res.setContentType( CONTENT_TYPE );
 
-        String action = req.getParameter( ACTION );
+        String action = req.getParameter( SocketProtocol.ACTION );
         if ( GET_ALL_LOGGER_NAMES.equalsIgnoreCase( action ) ) {
             getAllLoggerNames( req, res );
 
@@ -49,6 +49,9 @@ public class StompeeServlet extends HttpServlet {
 
         } else if ( GET_DEFAULT_SETTINGS.equalsIgnoreCase( action ) ) {
             getDefaultSettings( res );
+
+        } else if ( TEST_LOG.equalsIgnoreCase( action ) ) {
+            createTestLogs( );
         }
     }
 
@@ -75,7 +78,7 @@ public class StompeeServlet extends HttpServlet {
 //
 //        Level level = Level.INFO;
 //        String levelName = stompeeProperties.getProperty( Settings.LOG_LEVEL, level.getName() );
-//        level = StompeeUtil.parseLevel( levelName );
+//        level = ZolUtil.parseLevel( levelName );
 //
 //        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 //        objectBuilder.add( LEVEL, level.getName() );
@@ -87,7 +90,7 @@ public class StompeeServlet extends HttpServlet {
         //JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         Json json = Json.array();
 
-        List<String> loggers = StompeeUtil.getAllLoggerNames();
+        List<String> loggers = ZolUtil.getAllLoggerNames();
         loggers.forEach( ( name ) -> {
             //arrayBuilder.add( name );
             json.add( name );
@@ -105,5 +108,9 @@ public class StompeeServlet extends HttpServlet {
         }
 
         res.getWriter().flush();
+    }
+
+    private void createTestLogs() {
+        LOGGER.log( Level.SEVERE, "HOPE FOR USERS" );
     }
 }
