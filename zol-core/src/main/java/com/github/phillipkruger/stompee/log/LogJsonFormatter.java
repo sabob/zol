@@ -1,7 +1,9 @@
-package com.github.phillipkruger.stompee.util;
+package com.github.phillipkruger.stompee.log;
 
 import com.github.phillipkruger.stompee.json.Json;
 import com.github.phillipkruger.stompee.socket.SocketProtocol;
+import com.github.phillipkruger.stompee.util.Context;
+import com.github.phillipkruger.stompee.util.ContextFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,13 +22,13 @@ import static com.github.phillipkruger.stompee.socket.SocketProtocol.*;
  *
  * @author Phillip Kruger (stompee@phillip-kruger.com)
  */
-public class JsonFormatter extends Formatter {
+public class LogJsonFormatter extends Formatter {
 
-    private static final Logger LOGGER = Logger.getLogger( JsonFormatter.class.getName() );
+    private static final Logger LOGGER = Logger.getLogger( LogJsonFormatter.class.getName() );
 
     private String loggerName = "defaultLoggerName";
 
-    public JsonFormatter( String loggerName ) {
+    public LogJsonFormatter( String loggerName ) {
         this.loggerName = loggerName;
     }
 

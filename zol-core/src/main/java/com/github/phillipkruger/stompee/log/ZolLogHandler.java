@@ -1,6 +1,5 @@
 package com.github.phillipkruger.stompee.log;
 
-import com.github.phillipkruger.stompee.util.JsonFormatter;
 import com.github.phillipkruger.stompee.util.ZolUtil;
 import com.github.phillipkruger.stompee.config.ZolConfig;
 
@@ -24,7 +23,7 @@ public class ZolLogHandler extends Handler {
 
     public ZolLogHandler( Session session, String loggerName ) {
         this.session = session;
-        setFormatter( new JsonFormatter( loggerName ) );
+        setFormatter( new LogJsonFormatter( loggerName ) );
     }
 
     @Override
@@ -77,6 +76,14 @@ public class ZolLogHandler extends Handler {
     }
 
     private boolean isLogExceptionOnly() {
+
+        // Guard against there not being config set, but shouldn't happen since we create a config
+        // AND a Handler when Socket starts, and remove both when Socket stops
+        if (!ZolUtil.hasConfig( session )) {
+            return false;
+
+        }
+
         ZolConfig config = ZolUtil.getConfig( session );
         boolean exceptionsOnly = config.isExceptionsOnly();
         return exceptionsOnly;

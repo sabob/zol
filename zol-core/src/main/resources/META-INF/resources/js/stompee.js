@@ -152,6 +152,7 @@ function openSocket() {
         var datestring = timestamp.toLocaleDateString();
         var level = getClassLogLevel(json.logLevel);
         var tid = json.threadId;
+        var user = json.user;
         var msg = getMessage(json);
         var sourceClassName = json.sourceClassName;
         var sourceClassNameFull = json.sourceClassNameFull;
@@ -163,6 +164,7 @@ function openSocket() {
         rowStr += "<a class='ui " + getLogLevelColor(json.logLevel) + " empty circular label'></a> " + sequenceNumber + "\n";
         rowStr += "</td>\n";
         rowStr += "<td onclick='filterByThreadId(" + tid + ");'>" + tid + "</td>\n";
+        rowStr += "<td>" + user + "</td>\n";
         rowStr += "<td data-tooltip='" + datestring + "' data-position='top left'>" + timestring + "</td>\n";
         rowStr += "<td data-tooltip='" + sourceClassNameFull + "' data-position='top left'>" + sourceClassName + "</td>\n"
         rowStr += "<td>" + sourceMethodName + "</td>\n";
@@ -346,6 +348,10 @@ function writeResponse(text) {
     var atBottom = isScrollPositionAtBottom();
 
     $tableBody.append(text);
+
+    if (isMaxRowsExceeded()) {
+        removeOldRows();
+    }
 
     if (atBottom) {
         scrollToBottom();

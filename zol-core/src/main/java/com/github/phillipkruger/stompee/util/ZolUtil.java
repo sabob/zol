@@ -4,6 +4,7 @@ import com.github.phillipkruger.stompee.ServiceFactory;
 import com.github.phillipkruger.stompee.config.StompeeProperties;
 import com.github.phillipkruger.stompee.config.ZolConfig;
 import com.github.phillipkruger.stompee.config.ZolSessionStore;
+import com.github.phillipkruger.stompee.socket.SocketProtocol;
 
 import javax.websocket.Session;
 import java.util.*;
@@ -35,11 +36,11 @@ public class ZolUtil {
             if ( name != null && !name.isEmpty() && name.contains( "." ) ) {
                 LOGGERS.add( name );
                 String[] parts = name.split( "\\." );
-                LinkedList<String> l = new LinkedList<>( Arrays.asList( parts ) );
-                if ( l.size() > 2 ) {
-                    while ( l.size() > 1 ) {
-                        l.remove( l.size() - 1 );
-                        String parentLogger = String.join( ".", l );
+                LinkedList<String> partsList = new LinkedList<>( Arrays.asList( parts ) );
+                if ( partsList.size() > 2 ) {
+                    while ( partsList.size() > 1 ) {
+                        partsList.remove( partsList.size() - 1 );
+                        String parentLogger = String.join( ".", partsList );
                         if ( !LOGGERS.contains( parentLogger ) && parentLogger.contains( "." ) )
                             LOGGERS.add( parentLogger );
                     }
@@ -55,8 +56,8 @@ public class ZolUtil {
     }
 
     public static ZolSessionStore getOrCreateSessionStore( Session session ) {
-        ZolSessionStore store = ( ZolSessionStore) session.getUserProperties().get( ZolSessionStore.class.getName() );
-        if (store == null) {
+        ZolSessionStore store = ( ZolSessionStore ) session.getUserProperties().get( ZolSessionStore.class.getName() );
+        if ( store == null ) {
             store = createSessionStore( session );
         }
         return store;
@@ -64,7 +65,7 @@ public class ZolUtil {
 
     public static boolean hasSessionStore( Session session ) {
         ZolSessionStore store = ( ZolSessionStore ) session.getUserProperties().get( ZolSessionStore.class.getName() );
-        if (store == null) {
+        if ( store == null ) {
             return false;
         }
         return true;
@@ -94,7 +95,7 @@ public class ZolUtil {
 
     public static ZolConfig getOrCreateConfig( Session session ) {
         ZolConfig config = ( ZolConfig ) session.getUserProperties().get( ZolConfig.class.getName() );
-        if (config == null) {
+        if ( config == null ) {
             config = createConfig( session );
         }
         return config;
@@ -102,7 +103,7 @@ public class ZolUtil {
 
     public static boolean hasConfig( Session session ) {
         ZolConfig config = ( ZolConfig ) session.getUserProperties().get( ZolConfig.class.getName() );
-        if (config == null) {
+        if ( config == null ) {
             return false;
         }
         return true;
@@ -120,6 +121,10 @@ public class ZolUtil {
     public static Logger getLogger( String loggerName ) {
 
         Objects.nonNull( loggerName );
+
+        if ( useRootLogger( loggerName ) ) {
+            return Logger.getLogger("");
+        }
 
         if ( validLogger( loggerName ) ) {
             return Logger.getLogger( loggerName );
@@ -148,6 +153,11 @@ public class ZolUtil {
     }
 
     public static boolean validLogger( String name ) {
+
+        if ( SocketProtocol.ALL_LOGGERS.equals( name ) ) {
+            return true;
+        }
+
         return !name.isEmpty() && LOGGERS.contains( name );
     }
 
@@ -166,5 +176,12 @@ public class ZolUtil {
 
         }
         return appName;
+    }
+
+    private static boolean useRootLogger( String loggerName ) {
+        if ( SocketProtocol.ALL_LOGGERS.equals( loggerName ) ) {
+            return true;
+        }
+        return false;
     }
 }
