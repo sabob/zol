@@ -484,7 +484,7 @@ function registerPopups() {
 }
 
 function isTableSorted() {
-    var data = getTableSortData();
+    var data = getSortTableData();
     if (data == null) {
         return false;
     }
@@ -494,13 +494,13 @@ function isTableSorted() {
 }
 
 function sortTableData() {
-    var data = getTableSortData();
+    var data = getSortTableData();
     var dir = data.direction;
     var $th = $("#logtable thead tr th").eq(data.index);
     data.sort($th, dir);
 }
 
-function getTableSortData() {
+function getSortTableData() {
     var data = $logtable.data('tablesort');
     return data;
 }
