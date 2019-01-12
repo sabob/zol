@@ -22,7 +22,6 @@
 	$.tablesort.prototype = {
 
 		sort: function(th, direction) {
-			console.log("SORT CFALLED")
 			var start = new Date(),
 				self = this,
 				table = this.$table,
@@ -55,10 +54,10 @@
 			self.log("Sorting by " + this.index + ' ' + this.direction);
 
 			// Try to force a browser redraw
-			self.$table.css("display");
+			//self.$table.css("display");
 			// Run sorting asynchronously on a timeout to force browser redraw after
 			// `tablesort:start` callback. Also avoids locking up the browser too much.
-			setTimeout(function() {
+			//setTimeout(function() {
 				self.$sortCells.removeClass(self.settings.asc + ' ' + self.settings.desc);
 				for (var i = 0, length = unsortedValues.length; i < length; i++)
 				{
@@ -87,8 +86,8 @@
 				self.log('Sort finished in ' + ((new Date()).getTime() - start.getTime()) + 'ms');
 				self.$table.trigger('tablesort:complete', [self]);
 				//Try to force a browser redraw
-				self.$table.css("display");
-			}, unsortedValues.length > 2000 ? 200 : 10);
+				//self.$table.css("display");
+			//}, unsortedValues.length > 2000 ? 200 : 10);
 		},
 
 		log: function(msg) {
@@ -100,6 +99,7 @@
 		destroy: function() {
 			this.$sortCells.off('click.tablesort');
 			this.$table.data('tablesort', null);
+            this.$sortCells.removeClass(this.settings.asc + ' ' + this.settings.desc);
 			return null;
 		}
 

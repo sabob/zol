@@ -5,14 +5,20 @@
 
 var contextRoot = getContextRoot();
 var webSocket;
+
 var $logtable = $("#logtable");
 var $tableBody = $("#messages");
 
-var debounceSortTableData = debounce(sortTableData, 250);
+var sequenceColumnIndex = 1;
+//var popupVisible = false;
+var maxLogs = 15;
+
+var debounceSortTableData = debounce(sortTableData, 100);
 
 $('document').ready(function () {
     openSocket();
     registerPopups();
+    //addTableSortCompleteListener();
 
     // Get all logger names 
     var url = contextRoot + "/zol/servlet?action=getAllLoggerNames";
@@ -109,11 +115,9 @@ function openSocket() {
      * Binds functions to the listeners for the websocket.
      */
     webSocket.onopen = function (event) {
-        // For reasons I can't determine, onopen gets called twice
-        // and the first time event.data is undefined.
-        // Leave a comment if you know the answer.
-        if (event.data === undefined)
+        if (event.data === undefined) {
             return;
+        }
 
         writeResponse(event.data);
     };
@@ -130,7 +134,7 @@ function openSocket() {
 
             switch (json.messageType) {
                 case "log":
-                    messageLog(json);
+                    logMessage(json);
                     break;
                 case "startupMessage":
                     messageStartup(json);
@@ -146,13 +150,18 @@ function openSocket() {
     };
 
 
-    function messageLog(json) {
+    function logMessage(json) {
         var timestamp = new Date(json.timestamp);
         var timestring = timestamp.toLocaleTimeString();
         var datestring = timestamp.toLocaleDateString();
         var level = getClassLogLevel(json.logLevel);
         var tid = json.threadId;
+
         var user = json.user;
+        if (user == null) {
+            user = "";
+        }
+
         var msg = getMessage(json);
         var sourceClassName = json.sourceClassName;
         var sourceClassNameFull = json.sourceClassNameFull;
@@ -161,8 +170,7 @@ function openSocket() {
 
         var rowStr = "<tr class='" + level + "'>\n";
         rowStr += "<td data-tooltip='" + json.logLevell + "' data-position='top left'>\n";
-        rowStr += "<a class='ui " + getLogLevelColor(json.logLevel) + " empty circular label'></a> " + sequenceNumber + "\n";
-        rowStr += "</td>\n";
+        rowStr += "<a class='ui " + getLogLevelColor(json.logLevel) + " empty circular label'></a><span class='sequenceHolder'>" + sequenceNumber + "</span></td>\n";
         rowStr += "<td onclick='filterByThreadId(" + tid + ");'>" + tid + "</td>\n";
         rowStr += "<td>" + user + "</td>\n";
         rowStr += "<td data-tooltip='" + datestring + "' data-position='top left'>" + timestring + "</td>\n";
@@ -181,13 +189,12 @@ function openSocket() {
             rowStr += "<td class='dopopup'  data-html=\"" + traceStr + "\">" + msg + "</td>\n";
             //rowStr += "<td class='ui' data-html='<b>hi</b>'>" + msg + "</td>\n";
         } else {
-            rowStr += "<td>" + msg + "</td>\n";
+            rowStr += "<td colspan='2'>" + msg + "</td>\n";
         }
 
         rowStr += "</tr>";
 
         writeResponse(rowStr);
-
         //registerPopups();
     }
 
@@ -347,19 +354,24 @@ function writeResponse(text) {
     //$tableBody.innerHTML += text;
     var atBottom = isScrollPositionAtBottom();
 
+    //setTimeout(function () {
     $tableBody.append(text);
 
-    if (isMaxRowsExceeded()) {
-        removeOldRows();
-    }
+    ensureLotNotExceedMaxLogs();
 
     if (atBottom) {
+        console.log("AT BOTTOM")
         scrollToBottom();
     }
 
     if (isTableSorted()) {
         debounceSortTableData();
+        //sortTableData();
     }
+
+    //});
+
+
 }
 
 function putMap(map, key, value) {
@@ -483,7 +495,15 @@ function registerPopups() {
     $(document).on('click', 'table td.dopopup', function () {
         $(this)
             .popup({
-                on: 'click'
+                on: 'click',
+                // onShow: () => {
+                //     console.log("show")
+                //   popupVisible = true;
+                // },
+                // onHide: () => {
+                //     console.log("hide")
+                //     popupVisible = false;
+                // }
             })
             .popup('show reposition');
     });
@@ -500,6 +520,12 @@ function isTableSorted() {
 }
 
 function sortTableData() {
+
+    // if (popupVisible) {
+    //     // when a popup is visible we don't want to loose focus, so we don't sort anymore.
+    //     return;
+    // }
+
     var data = getSortTableData();
     var dir = data.direction;
     var $th = $("#logtable thead tr th").eq(data.index);
@@ -512,9 +538,8 @@ function getSortTableData() {
 }
 
 // function addTableSortCompleteListener() {
-//     $('table').on('tablesort:complete', function(event, tablesort) {
-//         sortingEnabled=true;
-//         console.log("sorting enabled now")
+//     $logtable.on('tablesort:complete', function(event, tablesort) {
+//         $logtable.find("a.clearSort i").addClass("eraser");
 //     });
 // }
 
@@ -563,6 +588,12 @@ function isScrollPositionAtBottom() {
 
 
 function scrollToBottom() {
+
+    // if (popupVisible) {
+    //     // when a popup is visible we don't want to loose focus, so we don't scroll anymore.
+    //     return;
+    // }
+
     var el = getScrollContainer();
 
     var scrollHeight = el.scrollHeight
@@ -599,3 +630,58 @@ function parseJson(item) {
     return result;
 }
 
+function ensureLotNotExceedMaxLogs() {
+    var sequences = getOldestSequencesAsArray();
+    if (sequences.length == 0) {
+        return;
+    }
+
+    $tableBody.find('.sequenceHolder').each(function () {
+
+        // The first item in cell is an link representing the log type through a colored circle
+        var seq = $(this).text();
+        if (sequences.includes(seq)) {
+            $row = $(this).parent().parent();
+            $row.remove();
+        }
+    });
+}
+
+function getOldestSequencesAsArray() {
+
+    // The table columns could be sorted so we need to iterate all table rows, get the sequences
+    // and return them in ascending order.
+
+    var values = [];
+
+//Iterate all td's in second column
+    $tableBody.find( '.sequenceHolder').each(function () {
+        var seq = $(this).text();
+        values.push(seq);
+    });
+
+
+    var elementsToRemove = [];
+
+    if (values.length > maxLogs) {
+        values.sort();
+
+        var numOfElementsToRemove = values.length - maxLogs;
+        elementsToRemove = values.splice(0, numOfElementsToRemove);
+    }
+
+    return elementsToRemove;
+
+}
+
+function clearSort(evt) {
+    evt.stopPropagation();
+    var data = getSortTableData();
+
+    if (data == null) {
+        return;
+    }
+
+    data.destroy();
+    $logtable.tablesort();
+}

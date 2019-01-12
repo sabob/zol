@@ -59,7 +59,37 @@
                         <th>Time</th>
                         <th>Class</th>
                         <th>Method</th>
-                        <th>Message</th>
+                        <th width="40%">Message
+                        </th>
+                        <th onclick="clearSort(event);" class="no-sort">
+                            <a title="Clear sort" class="item clearSort">
+                                <i class="eraser icon"></i>
+                            </a>
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <th  class="one wide no-sort">
+                            <input name="filter-seq">
+                        </th>
+                        <th class="no-sort">
+                            <input name="filter-thread">
+                        </th>
+                        <th class="no-sort">
+                            <input name="filter-user">
+                        </th>
+                        <th class="no-sort">
+                            <input name="filter-time">
+                        </th>
+                        <th class="no-sort">
+                            <input name="filter-class">
+                        </th>
+                        <th class="no-sort">
+                            <input name="filter-method">
+                            </th>
+                        <th class="no-sort">
+
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="messages">
