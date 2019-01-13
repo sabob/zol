@@ -16,6 +16,8 @@ var maxLogs = 15;
 var debounceSortTableData = debounce(sortTableData, 100);
 
 $('document').ready(function () {
+    //createCaseInsensitiveContainsSelector();
+    registerFilterListeners();
     openSocket();
     registerPopups();
     //addTableSortCompleteListener();
@@ -194,7 +196,9 @@ function openSocket() {
 
         rowStr += "</tr>";
 
-        writeResponse(rowStr);
+        var $newRow = writeResponse(rowStr);
+        $newRow.data('json', json);
+        toggleRowVisibility($newRow);
         //registerPopups();
     }
 
@@ -355,8 +359,7 @@ function writeResponse(text) {
     var atBottom = isScrollPositionAtBottom();
 
     //setTimeout(function () {
-    $tableBody.append(text);
-
+    var $newRow = $(text).appendTo($tableBody);
     ensureLotNotExceedMaxLogs();
 
     if (atBottom) {
@@ -371,6 +374,7 @@ function writeResponse(text) {
 
     //});
 
+    return $newRow;
 
 }
 
@@ -636,6 +640,7 @@ function ensureLotNotExceedMaxLogs() {
         return;
     }
 
+    //Iterate all td's in second column
     $tableBody.find('.sequenceHolder').each(function () {
 
         // The first item in cell is an link representing the log type through a colored circle
@@ -655,11 +660,10 @@ function getOldestSequencesAsArray() {
     var values = [];
 
 //Iterate all td's in second column
-    $tableBody.find( '.sequenceHolder').each(function () {
+    $tableBody.find('.sequenceHolder').each(function () {
         var seq = $(this).text();
         values.push(seq);
     });
-
 
     var elementsToRemove = [];
 
@@ -685,3 +689,113 @@ function clearSort(evt) {
     data.destroy();
     $logtable.tablesort();
 }
+
+function applyFilters() {
+
+    var rowFilters = getRowFilters();
+
+    $tableBody.find('tr').each(function () {
+        var $row = $(this);
+
+        toggleRowVisibility($row, rowFilters);
+    });
+}
+
+function toggleRowVisibility($row, rowFilters) {
+
+    var logRecord = $row.data('json');
+
+    // shouldn't happen
+    if (logRecord == null) {
+        return;
+    }
+
+    var show = canShowRecord(logRecord, rowFilters);
+
+    if (show) {
+        $row.show();
+    } else {
+        $row.hide();
+    }
+}
+
+/**
+ * Return true if the record passes the filter checks
+ */
+function canShowRecord(logRecord, rowFilters) {
+
+    if (rowFilters == null) {
+        rowFilters = getRowFilters();
+    }
+    var show = true;
+
+    $.each(rowFilters, function (filterName, filterValue) {
+
+        // if a previous filter set show to false we WILL hide
+        if (!show) {
+            return;
+        }
+
+        if (filterValue == null || filterValue.trim().length == 0) {
+            return;
+        }
+
+        filterValue = filterValue.toLowerCase();
+
+        var value = logRecord[filterName];
+        if (value == null) {
+            value = "";
+        }
+        value = value.toString().toLowerCase();
+
+        if (value.indexOf(filterValue) == -1) {
+            show = false;
+        }
+    });
+
+    return show;
+}
+
+function getRowFilters() {
+    var obj = {};
+    $logtable.find('tr[data-filter-row] input').each(function () {
+        var $input = $(this);
+        var value = $input.val();
+        var name = $input.attr('name');
+        obj[name] = value;
+    });
+    return obj;
+}
+
+function registerFilterListeners() {
+    $logtable.find('tr[data-filter-row] input').on('change', function () {
+        applyFilters();
+        // var $this = $(this);
+        // var $columnHeader = $this.closest('th');
+        // var columnIndex = $columnHeader.index() + 1;
+        // console.log("index: " + columnIndex)
+        // var searchValue = $this.val();
+        //
+        // var columnSelector = "td:nth-child(" + (columnIndex) + ")";
+        // console.log(columnSelector)
+        // $logtable.find(columnSelector + ":containsi('" + searchValue + "')").parent().show();
+        // $logtable.find(columnSelector + ":not(:containsi('" + searchValue + "'))").parent().hide();
+    });
+}
+
+//
+// function createCaseInsensitiveContainsSelector() {
+//
+// // Create a case insensitive selector -> :containsi('aBc')
+//     $.expr[':'].containsi = function (elem, idx, match) {
+//         var value = $(elem).text().toLowerCase();
+//         var search = match[3].toLowerCase();
+//
+//         if (value.indexOf(search) >= 0) {
+//             return true;
+//         }
+//
+//         return false;
+//     }
+// }
+
