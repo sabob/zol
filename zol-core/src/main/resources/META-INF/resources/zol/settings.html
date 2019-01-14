@@ -67,6 +67,7 @@
                     </div>
                 </div>        
             </div>
+
             <div class="eight wide column">
                 <div class="ui form">
                     <div class="grouped fields">
@@ -77,7 +78,7 @@
                                 <div class="ui slider checkbox">
                                     <input id="buttonExceptionsOnly" onclick="toggleExceptionsOnly()" name="buttonExceptionsOnly" type="checkbox">
                                     <label>Exceptions only</label>
-                                </div>                                        
+                                </div>
                             </div>
                             <div class="field">
                                 <div class="ui left icon input">
@@ -89,9 +90,27 @@
                     </div>
                 </div>
             </div>
+
+            <div class="eight wide column">
+                <div class="ui form">
+                    <div class="grouped fields">
+                        <label>Buffer</label>
+                        <div class="ui segment">
+
+                            <div class="field">
+
+                                    <label>Max number of log records (default 500)
+                                        <span  data-tooltip="Browser might become unresponsive with large number of log records">
+                                            <i class="circular help icon"></i>
+                                        </span>
+                                    </label>
+                                    <input id="maxLogRecords" onchange="updateMaxLogRecords()" placeholder="Max number of log records" type="text">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
     </div>
-
 </div>

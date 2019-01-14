@@ -11,7 +11,7 @@ var $tableBody = $("#messages");
 
 var sequenceColumnIndex = 1;
 //var popupVisible = false;
-var maxLogs = 15;
+var maxLogs = 500;
 
 var debounceSortTableData = debounce(sortTableData, 100);
 
@@ -263,9 +263,24 @@ function stopLog() {
     }
 }
 
+function getUIMaxLogRecords() {
+    var val = $("#maxLogRecords").val();
+    return val;
+}
+
+function setUIMaxLogRecords( records ) {
+    $("#maxLogRecords").val( records);
+}
+
 function getUILogLevel() {
     var levelValue = $("input[name='level']:checked").val();
     return levelValue;
+}
+
+function updateMaxLogRecords() {
+
+    var value = getUIMaxLogRecords();
+    maxLogs = value;
 }
 
 function toggleLogLevel() {
@@ -416,6 +431,9 @@ function showSettingsModal() {
 
     $('#modalSettings')
         .modal({
+            onShow: function() {
+                setUIMaxLogRecords(maxLogs);
+            },
             onHide: function () {
                 filterMessages();
             },
@@ -768,6 +786,14 @@ function getRowFilters() {
 }
 
 function registerFilterListeners() {
+
+    var debounceApplyFilters = debounce(applyFilters, 500);
+
+    $logtable.find('tr[data-filter-row] input').on('keyup', function () {
+        debounceApplyFilters();
+
+    });
+
     $logtable.find('tr[data-filter-row] input').on('change', function () {
         applyFilters();
         // var $this = $(this);
