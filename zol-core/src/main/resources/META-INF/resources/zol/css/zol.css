@@ -46,3 +46,8 @@ table a i {
 .sequenceHolder {
     margin-left: 5px;
 }
+
+.ui.popup {
+    overflow: scroll;
+    max-height: 400px;
+}

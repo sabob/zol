@@ -1,7 +1,7 @@
-package com.github.phillipkruger.stompee.socket;
+package com.github.zol.zol.socket;
 
-import com.github.phillipkruger.stompee.json.Json;
-import com.github.phillipkruger.stompee.util.ZolUtil;
+import com.github.zol.zol.json.Json;
+import com.github.zol.zol.util.ZolUtil;
 
 import java.util.logging.Level;
 
@@ -9,6 +9,12 @@ public class SocketProtocol {
 
     // Configurations that UI can specify
     private static final String FILTER = "filter";
+    private static final String FILTER_MESSAGE = "message";
+    private static final String FILTER_THREAD_ID = "threadId";
+    private static final String FILTER_USER = "user";
+    private static final String FILTER_SOURCE_CLASS_NAME = "sourceClassName";
+    private static final String FILTER_SOURCE_METHOD_NAME = "sourceMethodName";
+
     private static final String EXCEPTIONS_ONLY = "exceptionsOnly";
     public static final String LOG_LEVEL = "logLevel";
 
@@ -20,7 +26,7 @@ public class SocketProtocol {
     private static final String STOP = "stop";
     private static final String SET_LOG_LEVEL = "setLogLevel";
     private static final String SET_EXCEPTIONS_ONLY = "setExceptionsOnly";
-    private static final String SET_FILTER = "setFilter";
+    private static final String SET_FILTERS = "setFilters";
 
     public static final String ACTION = "action";
 
@@ -50,7 +56,7 @@ public class SocketProtocol {
 
     private String loggerName;
 
-    private String filter;
+    private LogFilter filter;
 
     private Boolean exceptionsOnly;
 
@@ -72,11 +78,11 @@ public class SocketProtocol {
         this.loggerName = loggerName;
     }
 
-    public String getFilter() {
+    public LogFilter getFilter() {
         return filter;
     }
 
-    public void setFilter( String filter ) {
+    public void setFilter( LogFilter filter ) {
         this.filter = filter;
     }
 
@@ -112,8 +118,8 @@ public class SocketProtocol {
         return SET_EXCEPTIONS_ONLY.equals( getAction() );
     }
 
-    public boolean isSetFilter() {
-        return SET_FILTER.equals( getAction() );
+    public boolean isSetFilters() {
+        return SET_FILTERS.equals( getAction() );
     }
 
     public static SocketProtocol parseZolProtocol( Json jo ) {
@@ -134,10 +140,7 @@ public class SocketProtocol {
             protocol.setExceptionsOnly( exceptionsOnly );
         }
 
-        if ( jo.has( FILTER ) ) {
-            String filter = jo.at( FILTER ).asString();
-            protocol.setFilter( filter );
-        }
+        setFilter( jo, protocol );
 
         if ( jo.has( LOG_LEVEL ) ) {
             String levelName = jo.at( LOG_LEVEL ).asString();
@@ -147,4 +150,42 @@ public class SocketProtocol {
 
         return protocol;
     }
+
+    private static void setFilter( Json jo, SocketProtocol protocol ) {
+
+        if ( jo.has( FILTER ) ) {
+            LogFilter filter = new LogFilter();
+            protocol.setFilter( filter );
+
+            Json joFilter = jo.at( FILTER );
+
+            if ( joFilter.has( FILTER_MESSAGE ) ) {
+                String message = joFilter.at( FILTER_MESSAGE ).asString();
+                filter.setMessage( message );
+            }
+
+            if ( joFilter.has( FILTER_SOURCE_CLASS_NAME ) ) {
+                String value = joFilter.at( FILTER_SOURCE_CLASS_NAME ).asString();
+                filter.setSourceClassName( value );
+            }
+
+            if ( joFilter.has( FILTER_SOURCE_METHOD_NAME ) ) {
+                String value = joFilter.at( FILTER_SOURCE_METHOD_NAME ).asString();
+                filter.setSourceMethodName( value );
+            }
+
+            if ( joFilter.has( FILTER_USER ) ) {
+                String value = joFilter.at( FILTER_USER ).asString();
+                filter.setUser( value );
+            }
+
+            if ( joFilter.has( FILTER_THREAD_ID ) ) {
+                String value = joFilter.at( FILTER_THREAD_ID ).asString();
+                long threadId = ZolUtil.parseLong( value );
+                filter.setThreadId( threadId );
+
+            }
+        }
+    }
 }
+

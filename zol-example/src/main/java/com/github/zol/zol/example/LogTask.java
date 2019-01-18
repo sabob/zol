@@ -1,4 +1,4 @@
-package com.github.phillipkruger.stompee.example;
+package com.github.zol.zol.example;
 
 import java.util.UUID;
 import java.util.logging.Level;
@@ -23,6 +23,15 @@ public class LogTask implements Runnable {
                 LOGGER.log( Level.FINER, "Here some random finer {0}", UUID.randomUUID() );
                 LOGGER.log( Level.FINEST, "Here some random finest {0}", UUID.randomUUID() );
                 LOGGER.log( Level.SEVERE, "And here an exception", new Exception( "Something bad happened" ) );
+
+                Exception ex = new Exception("Long exception coming");
+
+                for (int i = 5; i < 40; i++) {
+                    Exception ex2 = new Exception("Long exception suppressed");
+                    ex.addSuppressed( ex2 );
+                }
+
+                //LOGGER.log(Level.SEVERE, "Long exception",  ex);
 
                 Thread.sleep( 5000 );
 

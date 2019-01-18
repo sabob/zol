@@ -1,10 +1,10 @@
-package com.github.phillipkruger.stompee.util;
+package com.github.zol.zol.util;
 
-import com.github.phillipkruger.stompee.ServiceFactory;
-import com.github.phillipkruger.stompee.config.StompeeProperties;
-import com.github.phillipkruger.stompee.config.ZolConfig;
-import com.github.phillipkruger.stompee.config.ZolSessionStore;
-import com.github.phillipkruger.stompee.socket.SocketProtocol;
+import com.github.zol.zol.ServiceFactory;
+import com.github.zol.zol.config.ZolProperties;
+import com.github.zol.zol.config.ZolConfig;
+import com.github.zol.zol.config.ZolSessionStore;
+import com.github.zol.zol.socket.SocketProtocol;
 
 import javax.websocket.Session;
 import java.util.*;
@@ -123,7 +123,7 @@ public class ZolUtil {
         Objects.nonNull( loggerName );
 
         if ( useRootLogger( loggerName ) ) {
-            return Logger.getLogger("");
+            return Logger.getLogger( "" );
         }
 
         if ( validLogger( loggerName ) ) {
@@ -152,6 +152,17 @@ public class ZolUtil {
         return level;
     }
 
+    public static long parseLong( String value ) {
+        long result = 0;
+
+        try {
+            result = Long.parseLong( value );
+
+        } catch ( Exception ignore ) {
+        }
+        return result;
+    }
+
     public static boolean validLogger( String name ) {
 
         if ( SocketProtocol.ALL_LOGGERS.equals( name ) ) {
@@ -167,7 +178,7 @@ public class ZolUtil {
 
     public static String getAppName() {
 
-        StompeeProperties props = ServiceFactory.getProperties();
+        ZolProperties props = ServiceFactory.getProperties();
 
         String appName = props.getProperty( APP_NAME_PROP, null );
 
@@ -176,6 +187,17 @@ public class ZolUtil {
 
         }
         return appName;
+    }
+
+    public static boolean isNotBlank( String val ) {
+        return !isBlank( val );
+    }
+
+    public static boolean isBlank( String val ) {
+        if ( val == null || val.trim().length() == 0 ) {
+            return true;
+        }
+        return false;
     }
 
     private static boolean useRootLogger( String loggerName ) {

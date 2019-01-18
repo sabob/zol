@@ -1,4 +1,4 @@
-package com.github.phillipkruger.stompee.util;
+package com.github.zol.zol.util;
 
 public class Context {
 

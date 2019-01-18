@@ -1,4 +1,4 @@
-package com.github.phillipkruger.stompee.config;
+package com.github.zol.zol.config;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,14 +10,14 @@ import java.util.logging.Logger;
 /**
  * Default Properties
  *
- * @author Phillip Kruger (stompee@phillip-kruger.com)
+ * @author Phillip Kruger (zol@phillip-kruger.com)
  */
-public class StompeeProperties {
+public class ZolProperties {
 
-    private static final Logger LOGGER = Logger.getLogger( StompeeProperties.class.getName() );
+    private static final Logger LOGGER = Logger.getLogger( ZolProperties.class.getName() );
 
     private final Properties props = new Properties();
-    private final String PROPERTIES_FILE_NAME = "stompee.properties";
+    private final String PROPERTIES_FILE_NAME = "zol.properties";
 
     public void init() {
 
@@ -26,10 +26,10 @@ public class StompeeProperties {
             if ( propertiesStream != null ) {
                 props.load( propertiesStream );
             } else {
-                LOGGER.info( "Can not load stompee properties [stompee.properties]" );
+                LOGGER.info( "Can not load zol properties [zol.properties]. Make sure you add he zol.properties file in the root of your classpath" );
             }
         } catch ( NullPointerException | IOException ex ) {
-            LOGGER.info( "Can not load stompee properties [stompee.properties] - {0}" + ex.getMessage() );
+            LOGGER.info( "Can not load zol properties [zol.properties] - {0}" + ex.getMessage() );
         }
     }
 

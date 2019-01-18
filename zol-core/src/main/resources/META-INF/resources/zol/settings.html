@@ -13,20 +13,23 @@
 
                             <div class="field">
                                 <div class="ui slider checkbox">
-                                    <input id="buttonSevere" onclick="toggleLogLevel()" value="SEVERE" name="level" type="radio">
+                                    <input id="buttonSevere" onclick="toggleLogLevel()" value="SEVERE" name="level"
+                                           type="radio">
                                     <label>Severe (least verbose)</label>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="ui slider checkbox">
-                                    <input id="buttonWarning" onclick="toggleLogLevel()" value="WARNING" name="level" type="radio">
+                                    <input id="buttonWarning" onclick="toggleLogLevel()" value="WARNING" name="level"
+                                           type="radio">
                                     <label>Warning</label>
                                 </div>
                             </div>
                             <div class="field">
                                 <div class="ui slider checkbox checked">
                                     <div class="ui slider checkbox">
-                                        <input id="buttonInfo" onclick="toggleLogLevel()" value="INFO" name="level" type="radio">
+                                        <input id="buttonInfo" onclick="toggleLogLevel()" value="INFO" name="level"
+                                               type="radio">
                                         <label>Info</label>
                                     </div>
                                 </div>
@@ -34,7 +37,8 @@
                             <div class="field">
                                 <div class="ui slider checkbox checked">
                                     <div class="ui slider checkbox">
-                                        <input id="buttonConfig" onclick="toggleLogLevel()" value="CONFIG" name="level" type="radio">
+                                        <input id="buttonConfig" onclick="toggleLogLevel()" value="CONFIG" name="level"
+                                               type="radio">
                                         <label>Config</label>
                                     </div>
                                 </div>
@@ -42,7 +46,8 @@
                             <div class="field">
                                 <div class="ui slider checkbox checked">
                                     <div class="ui slider checkbox">
-                                        <input id="buttonFine" onclick="toggleLogLevel()" value="FINE" name="level" type="radio">
+                                        <input id="buttonFine" onclick="toggleLogLevel()" value="FINE" name="level"
+                                               type="radio">
                                         <label>Fine</label>
                                     </div>
                                 </div>
@@ -50,7 +55,8 @@
                             <div class="field">
                                 <div class="ui slider checkbox checked">
                                     <div class="ui slider checkbox">
-                                        <input id="buttonFiner" onclick="toggleLogLevel()" value="FINER" name="level" type="radio">
+                                        <input id="buttonFiner" onclick="toggleLogLevel()" value="FINER" name="level"
+                                               type="radio">
                                         <label>Finer</label>
                                     </div>
                                 </div>
@@ -58,14 +64,15 @@
                             <div class="field">
                                 <div class="ui slider checkbox checked">
                                     <div class="ui slider checkbox">
-                                        <input id="buttonFinest" onclick="toggleLogLevel()" value="FINEST" name="level" type="radio">
+                                        <input id="buttonFinest" onclick="toggleLogLevel()" value="FINEST" name="level"
+                                               type="radio">
                                         <label>Finest (most verbose)</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>        
+                </div>
             </div>
 
             <div class="eight wide column">
@@ -76,14 +83,9 @@
 
                             <div class="field">
                                 <div class="ui slider checkbox">
-                                    <input id="buttonExceptionsOnly" onclick="toggleExceptionsOnly()" name="buttonExceptionsOnly" type="checkbox">
+                                    <input id="buttonExceptionsOnly" onclick="toggleExceptionsOnly()"
+                                           name="buttonExceptionsOnly" type="checkbox">
                                     <label>Exceptions only</label>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="ui left icon input">
-                                    <input id="txtFilterMessages" placeholder="Filter messages" type="text">
-                                    <i class="filter icon"></i>
                                 </div>
                             </div>
                         </div>
@@ -99,12 +101,13 @@
 
                             <div class="field">
 
-                                    <label>Max number of log records (default 500)
-                                        <span  data-tooltip="Browser might become unresponsive with large number of log records">
+                                <label>Max number of log records (default 500)
+                                    <span data-tooltip="Browser might become unresponsive with large number of log records">
                                             <i class="circular help icon"></i>
                                         </span>
-                                    </label>
-                                    <input id="maxLogRecords" onchange="updateMaxLogRecords()" placeholder="Max number of log records" type="text">
+                                </label>
+                                <input id="maxLogRecords" onchange="updateMaxLogRecords()"
+                                       placeholder="Max number of log records" type="text">
 
                             </div>
                         </div>

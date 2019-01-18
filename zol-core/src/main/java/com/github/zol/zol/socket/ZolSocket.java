@@ -1,12 +1,12 @@
-package com.github.phillipkruger.stompee.socket;
+package com.github.zol.zol.socket;
 
-import com.github.phillipkruger.stompee.ServiceFactory;
-import com.github.phillipkruger.stompee.config.StompeeProperties;
-import com.github.phillipkruger.stompee.config.ZolConfig;
-import com.github.phillipkruger.stompee.config.ZolSessionStore;
-import com.github.phillipkruger.stompee.json.Json;
-import com.github.phillipkruger.stompee.log.ZolLogHandler;
-import com.github.phillipkruger.stompee.util.ZolUtil;
+import com.github.zol.zol.ServiceFactory;
+import com.github.zol.zol.config.ZolProperties;
+import com.github.zol.zol.config.ZolConfig;
+import com.github.zol.zol.config.ZolSessionStore;
+import com.github.zol.zol.json.Json;
+import com.github.zol.zol.log.ZolLogHandler;
+import com.github.zol.zol.util.ZolUtil;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -49,7 +49,7 @@ public class ZolSocket {
     //private static final String DOT = ".";
     public static final Map<String, Session> SESSIONS = new ConcurrentHashMap<>();
 
-    private StompeeProperties stompeeProperties = ServiceFactory.getProperties();
+    private ZolProperties zolProperties = ServiceFactory.getProperties();
 
     @OnOpen
     public void onOpen( Session session ) {
@@ -88,12 +88,12 @@ public class ZolSocket {
                 Boolean exceptionsOnly = protocol.getExceptionsOnly();
                 setExceptionsOnly( session, exceptionsOnly );
 
-            } else if ( protocol.isSetFilter() ) {
-                String filter = protocol.getFilter();
+            } else if ( protocol.isSetFilters() ) {
+                LogFilter filter = protocol.getFilter();
                 setFilter( session, filter );
             }
 
-        } catch ( Error err ) {
+        } catch ( Throwable err ) {
             LOGGER.log( Level.SEVERE, err.getMessage(), err );
             throw err;
         }
@@ -178,7 +178,7 @@ public class ZolSocket {
         config.setExceptionsOnly( exceptionsOnly );
     }
 
-    private void setFilter( Session session, String filter ) {
+    private void setFilter( Session session, LogFilter filter ) {
 
         ZolConfig config = ZolUtil.getOrCreateConfig( session );
         config.setFilter( filter );
@@ -187,6 +187,7 @@ public class ZolSocket {
     private void sendStartupMessage( String appName, Session session ) {
         StartupMessage msg = new StartupMessage();
         msg.setApplicationName( appName );
+        msg.setLogLevel( getDefaultLogLevel() );
         String startupMessage = msg.toString();
         try {
             session.getBasicRemote().sendText( startupMessage );
@@ -262,7 +263,7 @@ public class ZolSocket {
 //    }
 
     private String getDefaultLogLevel() {
-        String levelName = stompeeProperties.getProperty( SocketProtocol.LOG_LEVEL, null );
+        String levelName = zolProperties.getProperty( SocketProtocol.LOG_LEVEL, Level.INFO.getName() );
         return levelName;
     }
 

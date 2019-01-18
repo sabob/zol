@@ -1,4 +1,4 @@
-package com.github.phillipkruger.stompee.config;
+package com.github.zol.zol.config;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;

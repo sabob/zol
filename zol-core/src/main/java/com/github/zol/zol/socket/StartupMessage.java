@@ -1,6 +1,6 @@
-package com.github.phillipkruger.stompee.socket;
+package com.github.zol.zol.socket;
 
-import com.github.phillipkruger.stompee.json.Json;
+import com.github.zol.zol.json.Json;
 
 /**
  * To create a startup message, to send system state
@@ -10,12 +10,19 @@ public class StartupMessage {
 
     private String applicationName;
 
+    private String logLevel;
+
     protected Json toJson(){
         Json json = Json.object( SocketProtocol.MESSAGE_TYPE, getMessageType());
 
         if(applicationName!=null) {
             json.set( APPLICATION_NAME, getApplicationName() );
         }
+
+        if( logLevel !=null) {
+            json.set( SocketProtocol.LOG_LEVEL, getLogLevel() );
+        }
+
         return json;
     }
 
@@ -32,6 +39,14 @@ public class StartupMessage {
 
     public void setApplicationName( String applicationName ) {
         this.applicationName = applicationName;
+    }
+
+    public String getLogLevel() {
+        return logLevel;
+    }
+
+    public void setLogLevel( String logLevel ) {
+        this.logLevel = logLevel;
     }
 
     public String toString() {

@@ -19,7 +19,7 @@
         <!-- Semantic UI -->
         <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
         <!-- Our own crap -->
-        <link rel="stylesheet" type="text/css" href="css/stompee.css">
+        <link rel="stylesheet" type="text/css" href="css/zol.css">
 
     </head>
 
@@ -56,7 +56,7 @@
                         <th  class="one wide">Sequence Number</th>
                         <th>Thread</th>
                         <th>User</th>
-                        <th>Time</th>
+                        <th width="150px">Time</th>
                         <th>Class</th>
                         <th>Method</th>
                         <th width="40%">Message
@@ -78,7 +78,7 @@
                             <input name="user">
                         </th>
                         <th class="no-sort">
-                            <input name="timestamp">
+                            <!--<input name="timestamp">-->
                         </th>
                         <th class="no-sort">
                             <input name="sourceClassName">
@@ -87,6 +87,7 @@
                             <input name="sourceMethodName">
                             </th>
                         <th class="no-sort">
+                            <input name="message" style="width:100%">
 
                         </th>
                     </tr>
@@ -103,7 +104,7 @@
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/semantic.min.js"></script>
 
-        <script src="js/stompee.js"></script>
+        <script src="js/zol.js"></script>
         <script src="js/tablesort.js"></script>
         <script>
             $(function(){

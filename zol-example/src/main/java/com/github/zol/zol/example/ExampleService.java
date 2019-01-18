@@ -1,6 +1,6 @@
-package com.github.phillipkruger.stompee.example;
+package com.github.zol.zol.example;
 
-import com.github.phillipkruger.stompee.util.ZolUtil;
+import com.github.zol.zol.util.ZolUtil;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

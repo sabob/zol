@@ -1,20 +1,22 @@
-package com.github.phillipkruger.stompee.config;
+package com.github.zol.zol.config;
+
+import com.github.zol.zol.socket.LogFilter;
 
 import java.util.logging.Level;
 
 public class ZolConfig {
 
-    private String filter;
+    private LogFilter filter;
 
     private boolean exceptionsOnly;
 
     private Level logLevel;
 
-    public String getFilter() {
+    public LogFilter getFilter() {
         return filter;
     }
 
-    public void setFilter( String filter ) {
+    public void setFilter( LogFilter filter ) {
         this.filter = filter;
     }
 

@@ -1,4 +1,4 @@
-package com.github.phillipkruger.stompee.example;
+package com.github.zol.zol.example;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

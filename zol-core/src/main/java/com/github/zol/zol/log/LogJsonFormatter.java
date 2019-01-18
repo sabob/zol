@@ -1,9 +1,9 @@
-package com.github.phillipkruger.stompee.log;
+package com.github.zol.zol.log;
 
-import com.github.phillipkruger.stompee.json.Json;
-import com.github.phillipkruger.stompee.socket.SocketProtocol;
-import com.github.phillipkruger.stompee.util.Context;
-import com.github.phillipkruger.stompee.util.ContextFilter;
+import com.github.zol.zol.json.Json;
+import com.github.zol.zol.socket.SocketProtocol;
+import com.github.zol.zol.util.Context;
+import com.github.zol.zol.util.ContextFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import static com.github.phillipkruger.stompee.socket.SocketProtocol.*;
+import static com.github.zol.zol.socket.SocketProtocol.*;
 
 /**
  * Formatting log records into a json format

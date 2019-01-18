@@ -1,9 +1,9 @@
-package com.github.phillipkruger.stompee;
+package com.github.zol.zol;
 
-import com.github.phillipkruger.stompee.config.StompeeProperties;
-import com.github.phillipkruger.stompee.json.Json;
-import com.github.phillipkruger.stompee.socket.SocketProtocol;
-import com.github.phillipkruger.stompee.util.ZolUtil;
+import com.github.zol.zol.config.ZolProperties;
+import com.github.zol.zol.json.Json;
+import com.github.zol.zol.socket.SocketProtocol;
+import com.github.zol.zol.util.ZolUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -34,7 +34,7 @@ public class ZolServlet extends HttpServlet {
 
     private static final String TEST_LOG = "log";
 
-    private StompeeProperties stompeeProperties = ServiceFactory.getProperties();
+    private ZolProperties zolProperties = ServiceFactory.getProperties();
 
     @Override
     public void service( ServletRequest req, ServletResponse res ) throws IOException, ServletException {
@@ -58,13 +58,13 @@ public class ZolServlet extends HttpServlet {
     private void getDefaultSettings( ServletResponse res ) throws IOException, ServletException {
         Json json = Json.object();
         //JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        String loggerName = stompeeProperties.getProperty( SocketProtocol.LOGGER_NAME, null );
+        String loggerName = zolProperties.getProperty( SocketProtocol.LOGGER_NAME, SocketProtocol.ALL_LOGGERS );
         if ( loggerName != null && !loggerName.isEmpty() ) {
             //objectBuilder.add( SocketProtocol.LOGGER, loggerName );
             json.set( SocketProtocol.LOGGER_NAME, loggerName );
         }
 
-        String loggerLevel = stompeeProperties.getProperty( SocketProtocol.LOG_LEVEL, null );
+        String loggerLevel = zolProperties.getProperty( SocketProtocol.LOG_LEVEL, null );
         if ( loggerLevel != null && !loggerLevel.isEmpty() ) {
             //objectBuilder.add( SocketProtocol.LOG_LEVEL, loggerLevel );
             json.set( SocketProtocol.LOG_LEVEL, loggerLevel );
@@ -74,10 +74,10 @@ public class ZolServlet extends HttpServlet {
 
 //    private void getLoggerLevel( ServletRequest req, ServletResponse res ) throws IOException, ServletException {
 //        //String name = req.getParameter( NAME );
-//        //Level level = stompeeUtil.getLevel( name );
+//        //Level level = zolUtil.getLevel( name );
 //
 //        Level level = Level.INFO;
-//        String levelName = stompeeProperties.getProperty( Settings.LOG_LEVEL, level.getName() );
+//        String levelName = zolProperties.getProperty( Settings.LOG_LEVEL, level.getName() );
 //        level = ZolUtil.parseLevel( levelName );
 //
 //        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();

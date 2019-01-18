@@ -8,9 +8,6 @@ var webSocket;
 
 var $logtable = $("#logtable");
 var $tableBody = $("#messages");
-
-var sequenceColumnIndex = 1;
-//var popupVisible = false;
 var maxLogs = 500;
 
 var debounceSortTableData = debounce(sortTableData, 100);
@@ -22,7 +19,7 @@ $('document').ready(function () {
     registerPopups();
     //addTableSortCompleteListener();
 
-    // Get all logger names 
+    // Get all logger names
     var url = contextRoot + "/zol/servlet?action=getAllLoggerNames";
     var loggerNames = httpGet(url);
     var result = parseJson(loggerNames);
@@ -173,7 +170,7 @@ function openSocket() {
         var rowStr = "<tr class='" + level + "'>\n";
         rowStr += "<td data-tooltip='" + json.logLevell + "' data-position='top left'>\n";
         rowStr += "<a class='ui " + getLogLevelColor(json.logLevel) + " empty circular label'></a><span class='sequenceHolder'>" + sequenceNumber + "</span></td>\n";
-        rowStr += "<td onclick='filterByThreadId(" + tid + ");'>" + tid + "</td>\n";
+        rowStr += "<td>" + tid + "</td>\n";
         rowStr += "<td>" + user + "</td>\n";
         rowStr += "<td data-tooltip='" + datestring + "' data-position='top left'>" + timestring + "</td>\n";
         rowStr += "<td data-tooltip='" + sourceClassNameFull + "' data-position='top left'>" + sourceClassName + "</td>\n"
@@ -204,6 +201,7 @@ function openSocket() {
 
     function messageStartup(json) {
         $("#applicationName").html("<h2>" + json.applicationName + "</h2>");
+        setUILogLevel(json.logLevel);
     }
 }
 
@@ -224,9 +222,9 @@ function startLog() {
         var logLevel = getUILogLevel();
         //exceptionsOnly = true;
         var map = new Map();
-        putMap(map, "loggerName", loggerName);
-        putMap(map, "exceptionsOnly", exceptionsOnly);
-        putMap(map, "logLevel", logLevel);
+        map.set("loggerName", loggerName);
+        map.set("exceptionsOnly", exceptionsOnly);
+        map.set("logLevel", logLevel);
         var msg = createJsonMessage("start", map);
 
         webSocket.send(msg);
@@ -252,7 +250,7 @@ function stopLog() {
         //$("#settingsIcon").prop("disabled", true);
 
         var map = new Map();
-        putMap(map, "logger", loggerName);
+        map.set("logger", loggerName);
         var msg = createJsonMessage("stop", map);
         webSocket.send(msg);
 
@@ -268,8 +266,8 @@ function getUIMaxLogRecords() {
     return val;
 }
 
-function setUIMaxLogRecords( records ) {
-    $("#maxLogRecords").val( records);
+function setUIMaxLogRecords(records) {
+    $("#maxLogRecords").val(records);
 }
 
 function getUILogLevel() {
@@ -288,14 +286,14 @@ function toggleLogLevel() {
     var level = getUILogLevel();
 
     var map = new Map();
-    putMap(map, "logLevel", level);
+    map.set("logLevel", level);
     var msg = createJsonMessage("setLogLevel", map);
     webSocket.send(msg);
 }
 
 function toggleExceptionsOnly() {
     var map = new Map();
-    putMap(map, "exceptionsOnly", $('#buttonExceptionsOnly').is(":checked"));
+    map.set("exceptionsOnly", $('#buttonExceptionsOnly').is(":checked"));
     var msg = createJsonMessage("setExceptionsOnly", map);
     webSocket.send(msg);
 }
@@ -393,9 +391,6 @@ function writeResponse(text) {
 
 }
 
-function putMap(map, key, value) {
-    map.set(key, value);
-}
 
 function toObject(map) {
     const out = Object.create(null)
@@ -410,7 +405,7 @@ function toObject(map) {
 }
 
 function createJsonMessage(doAction, params) {
-    putMap(params, "action", doAction);
+    params.set("action", doAction);
     var o = toObject(params);
     return JSON.stringify(o);
 }
@@ -431,11 +426,10 @@ function showSettingsModal() {
 
     $('#modalSettings')
         .modal({
-            onShow: function() {
+            onShow: function () {
                 setUIMaxLogRecords(maxLogs);
             },
             onHide: function () {
-                filterMessages();
             },
             onHidden: function () {
                 cleanupModal();
@@ -444,19 +438,6 @@ function showSettingsModal() {
         .modal('setting', 'transition', 'vertical flip')
         .modal('show')
     //}
-}
-
-function filterMessages() {
-    var filter = $("#txtFilterMessages").val();
-
-    var map = new Map();
-    if (filter) {
-        putMap(map, "filter", filter);
-    } else {
-        putMap(map, "filter", "");
-    }
-    var msg = createJsonMessage("setFilter", map);
-    webSocket.send(msg);
 }
 
 function showAboutModal() {
@@ -469,10 +450,6 @@ function showAboutModal() {
         .modal('setting', 'transition', 'vertical flip')
         .modal('show')
     ;
-}
-
-function filterByThreadId(threadId) {
-    //console.log("TODO: Filter by id " + threadId);
 }
 
 function setUILogLevel(level) {
@@ -518,6 +495,7 @@ function registerPopups() {
         $(this)
             .popup({
                 on: 'click',
+                lastResort: 'bottom right',
                 // onShow: () => {
                 //     console.log("show")
                 //   popupVisible = true;
@@ -575,7 +553,12 @@ function cleanupModal() {
 // leading edge, instead of the trailing.
 function debounce(func, wait, immediate) {
     var timeout;
-    return function () {
+    return function (clear) {
+        if (clear) {
+            clearTimeout(timeout);
+            timeout = null;
+            return;
+        }
         var context = this, args = arguments;
         var later = function () {
             timeout = null;
@@ -708,6 +691,16 @@ function clearSort(evt) {
     $logtable.tablesort();
 }
 
+function updateRemoteFilters() {
+    var filters = getRowFilters();
+
+    var map = new Map();
+    map.set("filter", filters);
+
+    var msg = createJsonMessage("setFilters", map);
+    webSocket.send(msg);
+}
+
 function applyFilters() {
 
     var rowFilters = getRowFilters();
@@ -717,6 +710,8 @@ function applyFilters() {
 
         toggleRowVisibility($row, rowFilters);
     });
+
+    updateRemoteFilters();
 }
 
 function toggleRowVisibility($row, rowFilters) {
@@ -791,11 +786,13 @@ function registerFilterListeners() {
 
     $logtable.find('tr[data-filter-row] input').on('keyup', function () {
         debounceApplyFilters();
-
     });
 
     $logtable.find('tr[data-filter-row] input').on('change', function () {
+        var clearTimeout = true;
+        debounceApplyFilters(clearTimeout);
         applyFilters();
+
         // var $this = $(this);
         // var $columnHeader = $this.closest('th');
         // var columnIndex = $columnHeader.index() + 1;

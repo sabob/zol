@@ -1,7 +1,8 @@
-package com.github.phillipkruger.stompee.log;
+package com.github.zol.zol.log;
 
-import com.github.phillipkruger.stompee.util.ZolUtil;
-import com.github.phillipkruger.stompee.config.ZolConfig;
+import com.github.zol.zol.socket.LogFilter;
+import com.github.zol.zol.util.ZolUtil;
+import com.github.zol.zol.config.ZolConfig;
 
 import javax.websocket.Session;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
- * Log handler for Stompee
+ * Log handler for Zol
  *
  * @author Phillip Kruger (stompee@phillip-kruger.com)
  */
@@ -29,7 +30,7 @@ public class ZolLogHandler extends Handler {
     @Override
     public void publish( LogRecord logRecord ) {
 
-        if ( session != null && shouldLog( logRecord ) && filter( logRecord ) ) {
+        if ( session != null && canLog( logRecord ) && matchFilter( logRecord ) ) {
 
             String message = getFormatter().format( logRecord );
             try {
@@ -47,7 +48,7 @@ public class ZolLogHandler extends Handler {
         }
     }
 
-    private boolean shouldLog( LogRecord logRecord ) {
+    private boolean canLog( LogRecord logRecord ) {
 
         if ( isLogExceptionOnly() ) {
             return isException( logRecord );
@@ -79,7 +80,7 @@ public class ZolLogHandler extends Handler {
 
         // Guard against there not being config set, but shouldn't happen since we create a config
         // AND a Handler when Socket starts, and remove both when Socket stops
-        if (!ZolUtil.hasConfig( session )) {
+        if ( !ZolUtil.hasConfig( session ) ) {
             return false;
 
         }
@@ -96,15 +97,23 @@ public class ZolLogHandler extends Handler {
         return true;
     }
 
-    private boolean filter( LogRecord logRecord ) {
+    private boolean matchFilter( LogRecord logRecord ) {
         ZolConfig config = ZolUtil.getConfig( session );
-        String filter = config.getFilter();
+        LogFilter filter = config.getFilter();
 
-        if ( filter == null || filter.isEmpty() ) {
+        if ( filter == null ) {
             return true;
         }
 
-        return logRecord.getMessage().contains( filter );
+        FilterMatcher matcher = new FilterMatcher();
+
+        String logMessage = getFormatter().formatMessage( logRecord );
+        if (matcher.matchFilter( filter, logRecord, logMessage)) {
+            return true;
+        }
+
+        return false;
+
     }
 
     @Override
