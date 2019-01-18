@@ -34,7 +34,7 @@ You can enable the filter in web.xml:
 ```
 <filter>
     <filter-name>zolSecurityFilter</filter-name>
-    <filter-class>com.github.zol.filter.ZolSecurityFilter</filter-class>
+    <filter-class>ZolSecurityFilter</filter-class>
 </filter>
 
 <filter-mapping>
