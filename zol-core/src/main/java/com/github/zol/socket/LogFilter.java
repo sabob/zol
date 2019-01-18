@@ -1,4 +1,4 @@
-package com.github.zol.zol.socket;
+package com.github.zol.socket;
 
 public class LogFilter {
 

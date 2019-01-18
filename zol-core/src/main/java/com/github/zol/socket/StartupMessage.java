@@ -1,6 +1,6 @@
-package com.github.zol.zol.socket;
+package com.github.zol.socket;
 
-import com.github.zol.zol.json.Json;
+import com.github.zol.json.Json;
 
 /**
  * To create a startup message, to send system state

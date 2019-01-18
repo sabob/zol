@@ -10,6 +10,8 @@ var $logtable = $("#logtable");
 var $tableBody = $("#messages");
 var maxLogs = 500;
 
+var currentRowFilters = {};
+
 var debounceSortTableData = debounce(sortTableData, 100);
 
 $('document').ready(function () {
@@ -220,11 +222,13 @@ function startLog() {
 
         var exceptionsOnly = $('#buttonExceptionsOnly').prop('checked');
         var logLevel = getUILogLevel();
+        var filters = getRowFilters();
         //exceptionsOnly = true;
         var map = new Map();
         map.set("loggerName", loggerName);
         map.set("exceptionsOnly", exceptionsOnly);
         map.set("logLevel", logLevel);
+        map.set("filters", filters);
         var msg = createJsonMessage("start", map);
 
         webSocket.send(msg);
@@ -553,12 +557,7 @@ function cleanupModal() {
 // leading edge, instead of the trailing.
 function debounce(func, wait, immediate) {
     var timeout;
-    return function (clear) {
-        if (clear) {
-            clearTimeout(timeout);
-            timeout = null;
-            return;
-        }
+    var result = function () {
         var context = this, args = arguments;
         var later = function () {
             timeout = null;
@@ -569,6 +568,13 @@ function debounce(func, wait, immediate) {
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(context, args);
     };
+
+    result.cancel = function () {
+        clearTimeout(timeout);
+        timeout = null;
+    };
+
+    return result;
 }
 
 function getScrollContainer() {
@@ -695,7 +701,7 @@ function updateRemoteFilters() {
     var filters = getRowFilters();
 
     var map = new Map();
-    map.set("filter", filters);
+    map.set("filters", filters);
 
     var msg = createJsonMessage("setFilters", map);
     webSocket.send(msg);
@@ -703,12 +709,17 @@ function updateRemoteFilters() {
 
 function applyFilters() {
 
-    var rowFilters = getRowFilters();
+    var newRowFilters = getRowFilters();
+    if (rowFiltersUnchanged(newRowFilters, currentRowFilters)) {
+        return;
+    }
+
+    currentRowFilters = newRowFilters;
 
     $tableBody.find('tr').each(function () {
         var $row = $(this);
 
-        toggleRowVisibility($row, rowFilters);
+        toggleRowVisibility($row, currentRowFilters);
     });
 
     updateRemoteFilters();
@@ -785,40 +796,20 @@ function registerFilterListeners() {
     var debounceApplyFilters = debounce(applyFilters, 500);
 
     $logtable.find('tr[data-filter-row] input').on('keyup', function () {
+        console.log("keyup")
         debounceApplyFilters();
     });
 
     $logtable.find('tr[data-filter-row] input').on('change', function () {
-        var clearTimeout = true;
-        debounceApplyFilters(clearTimeout);
+        debounceApplyFilters.cancel();
+        console.log("change")
         applyFilters();
-
-        // var $this = $(this);
-        // var $columnHeader = $this.closest('th');
-        // var columnIndex = $columnHeader.index() + 1;
-        // console.log("index: " + columnIndex)
-        // var searchValue = $this.val();
-        //
-        // var columnSelector = "td:nth-child(" + (columnIndex) + ")";
-        // console.log(columnSelector)
-        // $logtable.find(columnSelector + ":containsi('" + searchValue + "')").parent().show();
-        // $logtable.find(columnSelector + ":not(:containsi('" + searchValue + "'))").parent().hide();
     });
 }
 
-//
-// function createCaseInsensitiveContainsSelector() {
-//
-// // Create a case insensitive selector -> :containsi('aBc')
-//     $.expr[':'].containsi = function (elem, idx, match) {
-//         var value = $(elem).text().toLowerCase();
-//         var search = match[3].toLowerCase();
-//
-//         if (value.indexOf(search) >= 0) {
-//             return true;
-//         }
-//
-//         return false;
-//     }
-// }
+function rowFiltersUnchanged(a, b) {
+    let aStr = JSON.stringify(a);
+    let bStr = JSON.stringify(b);
+    return aStr === bStr
+}
 

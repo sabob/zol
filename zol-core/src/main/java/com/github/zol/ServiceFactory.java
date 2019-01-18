@@ -1,6 +1,6 @@
-package com.github.zol.zol;
+package com.github.zol;
 
-import com.github.zol.zol.config.ZolProperties;
+import com.github.zol.config.ZolProperties;
 
 public class ServiceFactory {
 

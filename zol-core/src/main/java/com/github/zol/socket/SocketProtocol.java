@@ -1,14 +1,14 @@
-package com.github.zol.zol.socket;
+package com.github.zol.socket;
 
-import com.github.zol.zol.json.Json;
-import com.github.zol.zol.util.ZolUtil;
+import com.github.zol.json.Json;
+import com.github.zol.util.ZolUtil;
 
 import java.util.logging.Level;
 
 public class SocketProtocol {
 
     // Configurations that UI can specify
-    private static final String FILTER = "filter";
+    private static final String FILTERS = "filters";
     private static final String FILTER_MESSAGE = "message";
     private static final String FILTER_THREAD_ID = "threadId";
     private static final String FILTER_USER = "user";
@@ -153,11 +153,11 @@ public class SocketProtocol {
 
     private static void setFilter( Json jo, SocketProtocol protocol ) {
 
-        if ( jo.has( FILTER ) ) {
+        if ( jo.has( FILTERS ) ) {
             LogFilter filter = new LogFilter();
             protocol.setFilter( filter );
 
-            Json joFilter = jo.at( FILTER );
+            Json joFilter = jo.at( FILTERS );
 
             if ( joFilter.has( FILTER_MESSAGE ) ) {
                 String message = joFilter.at( FILTER_MESSAGE ).asString();

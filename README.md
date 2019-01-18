@@ -21,6 +21,24 @@ Add zol.properties to the classpath with the following properties:
 ```
 appName=your app name - default: Unkonwn
 loggerName=some.default.package - default: ALL 
-logLevel=default log level - default: FINE
+logLevel=default log level - default: INFO
+```
 
+### Security
+Secure the path **/zol** in your application otherwise the logs will be viewable publicly.
+
+Zol ships with a poor-man security filter that will redirect to 
+the root path ("/") if the user is not authenticated.
+
+You can enable the filter in web.xml:
+```
+<filter>
+    <filter-name>zolSecurityFilter</filter-name>
+    <filter-class>com.github.zol.filter.ZolSecurityFilter</filter-class>
+</filter>
+
+<filter-mapping>
+    <filter-name>zolSecurityFilter</filter-name>
+    <url-pattern>/zol/*</url-pattern>
+</filter-mapping> 
 ```

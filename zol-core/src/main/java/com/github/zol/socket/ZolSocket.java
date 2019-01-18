@@ -1,12 +1,12 @@
-package com.github.zol.zol.socket;
+package com.github.zol.socket;
 
-import com.github.zol.zol.ServiceFactory;
-import com.github.zol.zol.config.ZolProperties;
-import com.github.zol.zol.config.ZolConfig;
-import com.github.zol.zol.config.ZolSessionStore;
-import com.github.zol.zol.json.Json;
-import com.github.zol.zol.log.ZolLogHandler;
-import com.github.zol.zol.util.ZolUtil;
+import com.github.zol.ServiceFactory;
+import com.github.zol.config.ZolProperties;
+import com.github.zol.config.ZolConfig;
+import com.github.zol.config.ZolSessionStore;
+import com.github.zol.json.Json;
+import com.github.zol.log.ZolLogHandler;
+import com.github.zol.util.ZolUtil;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -149,25 +149,6 @@ public class ZolSocket {
         config.setLogLevel( level );
     }
 
-//    private void setLogLevel( Session session, String levelName ) {
-//        String loggerName = ( String ) session.getUserProperties().get( LOGGER_NAME );
-//
-//        Level level = levelName == null ? null : Level.parse( levelName );
-//        Logger logger = Logger.getLogger( loggerName );
-//        logger.setLevel( level );
-//
-//        LogManager logManager = LogManager.getLogManager();
-//        Enumeration<String> loggerNames = logManager.getLoggerNames();
-//        String prefix = loggerName + DOT;
-//
-//        while ( loggerNames.hasMoreElements() ) {
-//            String aLoggerName = loggerNames.nextElement();
-//            if ( aLoggerName.startsWith( prefix ) ) {
-//                Logger.getLogger( aLoggerName ).setLevel( level );
-//            }
-//        }
-//    }
-
     private void setExceptionsOnly( Session session, Boolean exceptionsOnly ) {
         ZolConfig config = ZolUtil.getOrCreateConfig( session );
 
@@ -286,6 +267,9 @@ public class ZolSocket {
         String loggerName = protocol.getLoggerName();
         setExceptionsOnly( session, protocol.getExceptionsOnly() );
         setLogLevel( session, protocol.getLogLevel() );
+
+        LogFilter filter = protocol.getFilter();
+        setFilter( session, filter );
 
         if ( ZolUtil.validLogger( loggerName ) ) {
             performStart( session, protocol );

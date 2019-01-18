@@ -1,10 +1,10 @@
-package com.github.zol.zol.util;
+package com.github.zol.util;
 
-import com.github.zol.zol.ServiceFactory;
-import com.github.zol.zol.config.ZolProperties;
-import com.github.zol.zol.config.ZolConfig;
-import com.github.zol.zol.config.ZolSessionStore;
-import com.github.zol.zol.socket.SocketProtocol;
+import com.github.zol.ServiceFactory;
+import com.github.zol.config.ZolProperties;
+import com.github.zol.config.ZolConfig;
+import com.github.zol.config.ZolSessionStore;
+import com.github.zol.socket.SocketProtocol;
 
 import javax.websocket.Session;
 import java.util.*;

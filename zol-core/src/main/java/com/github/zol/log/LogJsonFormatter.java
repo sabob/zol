@@ -1,9 +1,9 @@
-package com.github.zol.zol.log;
+package com.github.zol.log;
 
-import com.github.zol.zol.json.Json;
-import com.github.zol.zol.socket.SocketProtocol;
-import com.github.zol.zol.util.Context;
-import com.github.zol.zol.util.ContextFilter;
+import com.github.zol.json.Json;
+import com.github.zol.socket.SocketProtocol;
+import com.github.zol.filter.Context;
+import com.github.zol.filter.ZolContextFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import static com.github.zol.zol.socket.SocketProtocol.*;
+import static com.github.zol.socket.SocketProtocol.*;
 
 /**
  * Formatting log records into a json format
@@ -45,8 +45,8 @@ public class LogJsonFormatter extends Formatter {
         String formattedMessage = formatMessage( logRecord );
         Json json = Json.object( MESSAGE_TYPE, LOG );
 
-        if ( ContextFilter.hasThreadLocalContext() ) {
-            Context ctx = ContextFilter.getThreadLocalContext();
+        if ( ZolContextFilter.hasThreadLocalContext() ) {
+            Context ctx = ZolContextFilter.getThreadLocalContext();
             String remoteUser = ctx.getRemoteUser();
 
             if (remoteUser == null || remoteUser.trim().isEmpty()) {

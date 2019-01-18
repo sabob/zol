@@ -1,9 +1,9 @@
-package com.github.zol.zol;
+package com.github.zol;
 
-import com.github.zol.zol.config.ZolProperties;
-import com.github.zol.zol.json.Json;
-import com.github.zol.zol.socket.SocketProtocol;
-import com.github.zol.zol.util.ZolUtil;
+import com.github.zol.config.ZolProperties;
+import com.github.zol.json.Json;
+import com.github.zol.socket.SocketProtocol;
+import com.github.zol.util.ZolUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;

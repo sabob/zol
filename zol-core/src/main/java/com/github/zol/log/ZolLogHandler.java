@@ -1,8 +1,8 @@
-package com.github.zol.zol.log;
+package com.github.zol.log;
 
-import com.github.zol.zol.socket.LogFilter;
-import com.github.zol.zol.util.ZolUtil;
-import com.github.zol.zol.config.ZolConfig;
+import com.github.zol.socket.LogFilter;
+import com.github.zol.util.ZolUtil;
+import com.github.zol.config.ZolConfig;
 
 import javax.websocket.Session;
 import java.io.IOException;

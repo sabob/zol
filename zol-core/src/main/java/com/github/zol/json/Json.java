@@ -16,7 +16,7 @@
  * Note: this file incorporates source code from 3d party entities. Such code
  * is copyrighted by those entities as indicated below.
  */
-package com.github.zol.zol.json;
+package com.github.zol.json;
 
 import java.io.IOException;
 import java.math.BigDecimal;

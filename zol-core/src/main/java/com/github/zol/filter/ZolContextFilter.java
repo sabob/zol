@@ -1,4 +1,4 @@
-package com.github.zol.zol.util;
+package com.github.zol.filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebFilter( urlPatterns = "/*" )
-public class ContextFilter implements Filter {
+public class ZolContextFilter implements Filter {
 
     private static ThreadLocal<Context> CONTEXT = new ThreadLocal<>();
 
@@ -20,8 +20,6 @@ public class ContextFilter implements Filter {
     public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain ) throws IOException, ServletException {
 
         try {
-
-
             HttpServletRequest req = ( HttpServletRequest ) servletRequest;
             HttpServletResponse resp = ( HttpServletResponse ) servletResponse;
 

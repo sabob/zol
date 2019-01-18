@@ -1,4 +1,4 @@
-package com.github.zol.zol.config;
+package com.github.zol.config;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;

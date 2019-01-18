@@ -1,6 +1,6 @@
-package com.github.zol.zol.config;
+package com.github.zol.config;
 
-import com.github.zol.zol.socket.LogFilter;
+import com.github.zol.socket.LogFilter;
 
 import java.util.logging.Level;
 

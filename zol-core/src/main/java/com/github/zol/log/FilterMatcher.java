@@ -1,9 +1,9 @@
-package com.github.zol.zol.log;
+package com.github.zol.log;
 
-import com.github.zol.zol.socket.LogFilter;
-import com.github.zol.zol.util.Context;
-import com.github.zol.zol.util.ContextFilter;
-import com.github.zol.zol.util.ZolUtil;
+import com.github.zol.socket.LogFilter;
+import com.github.zol.filter.Context;
+import com.github.zol.filter.ZolContextFilter;
+import com.github.zol.util.ZolUtil;
 
 import java.util.logging.LogRecord;
 
@@ -61,7 +61,7 @@ public class FilterMatcher {
             return true;
         }
 
-        Context ctx = ContextFilter.getThreadLocalContext();
+        Context ctx = ZolContextFilter.getThreadLocalContext();
         String remoteUser = ctx.getRemoteUser();
 
         if ( remoteUser == null ) {
