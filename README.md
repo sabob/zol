@@ -42,6 +42,6 @@ Here is an example web.xml to secure *zol*:
 </security-constraint>
 
 <security-role>
-    <role-name>SecureZol</role-name>
+    <role-name>ZolAdmin</role-name>
 </security-role>
 ```
