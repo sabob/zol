@@ -27,18 +27,21 @@ logLevel=default log level - default: INFO
 ### Security
 Secure the path **/zol** in your application otherwise the logs will be viewable publicly.
 
-Zol ships with a poor-man security filter that will redirect to 
-the root path ("/") if the user is not authenticated.
-
-You can enable the filter in web.xml:
+Here is an example web.xml to secure *zol*:
 ```
-<filter>
-    <filter-name>zolSecurityFilter</filter-name>
-    <filter-class>ZolSecurityFilter</filter-class>
-</filter>
+<security-constraint>
+    <display-name>SecureAdmin</display-name>
+    <web-resource-collection>
+        <web-resource-name>ScureZol</web-resource-name>
+        <url-pattern>/zol/*</url-pattern>
+    </web-resource-collection>
+        
+    <auth-constraint>
+        <role-name>ZolAdmin</role-name>
+        </auth-constraint>
+</security-constraint>
 
-<filter-mapping>
-    <filter-name>zolSecurityFilter</filter-name>
-    <url-pattern>/zol/*</url-pattern>
-</filter-mapping> 
+<security-role>
+    <role-name>SecureZol</role-name>
+</security-role>
 ```
