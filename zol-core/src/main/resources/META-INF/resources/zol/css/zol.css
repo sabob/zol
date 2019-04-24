@@ -7,6 +7,7 @@
 
 .log {
     margin-top: 5em;
+    overflow-x: auto;
 }
 
 .wireframe {
@@ -50,4 +51,8 @@ table a i {
 .ui.popup {
     overflow: scroll;
     max-height: 400px;
+}
+
+.ui.basic.table {
+    white-space: pre !important;
 }
