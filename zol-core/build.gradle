@@ -1,6 +1,8 @@
 apply plugin: 'java-library'
 //apply plugin: 'war'
 
+jar.baseName = 'zol'
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
