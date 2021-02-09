@@ -14,8 +14,10 @@ def v = [
 
 dependencies {
 
-    compile project(':zol-core')
+    compile(project(':zol-core')) {
+        transitive = false
+    }
 
-    //api group: 'javax.servlet', name: 'javax.servlet-api', version: "$v.servletApi"
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: "$v.servletApi"
 
 }

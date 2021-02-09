@@ -2,3 +2,9 @@
 /.gitignore
 /.idea/
 !/.gitignore
+/zol-example/src/main/webapp/META-INF/context.xml
+/.gradle/
+/build/
+/out/
+/zol-core/build/
+/zol-example/build/
